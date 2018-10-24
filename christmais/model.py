@@ -3,14 +3,20 @@
 """Embed text input into a numerical vector using the FastText model"""
 
 
+# Import standard library
+import logging
+
 # Import modules
 import numpy as np
 from gensim.models import FastText
+from gensim.test.utils import get_tmpfile
 from nltk.corpus import brown
 from sklearn.preprocessing import minmax_scale
 
+logging.basicConfig(level=logging.INFO)
 
-def get_fasttext_pretrained(**kwargs):
+
+def get_fasttext_pretrained(load=False, **kwargs):
     """Returns a FastTextWrapper model pre-trained with brown corpus
 
     Parameters
@@ -24,7 +30,21 @@ def get_fasttext_pretrained(**kwargs):
         A fitted instance of the FastTextWrapper model
 
     """
-    return FastTextWrapper(sentences=brown.sents(), **kwargs)
+    logger = logging.getLogger(__name__)
+    if load:
+        try:
+            fname = get_tmpfile("brown_fasttext.model")
+            model = FastText.load(fname)
+            msg = "FastText model found at {}"
+            logger.info(msg.format(fname))
+        except FileNotFoundError:
+            msg = "{} not found. Will train FastText with brown from scratch"
+            logger.warn(msg.format(fname))
+            model = FastTextWrapper(sentences=brown.sents(), **kwargs)
+            model.save(fname)
+    else:
+        model = FastTextWrapper(sentences=brown.sents(), **kwargs)
+    return model
 
 
 class FastTextWrapper(object):
@@ -64,8 +84,15 @@ class FastTextWrapper(object):
             seed=seed,
             **kwargs
         )
+        self.logger = logging.getLogger(__name__)
         # Set random seed
         np.random.seed(self.seed)
+
+    def save(self, fname):
+        """Wrapper for FastText.save method"""
+        self.model.save(fname)
+        msg = "FastText model saved at {}"
+        self.logger(msg.format(fname))
 
     def transform(self, X):
         """Transform a sentence into its vector representation

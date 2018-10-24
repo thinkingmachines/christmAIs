@@ -34,36 +34,25 @@ def get_fasttext_pretrained(load=False, **kwargs):
     """
     logger = logging.getLogger(__name__)
     if load:
+        fname = get_tmpfile("brown_fasttext.model")
         try:
-            model = FastTextWrapper(
-                sentences=brown.sents(),
-                load=True,
-                load_fname="brown_fasttext.model",
-            )
+            model = FastTextWrapper.load(fname)
         except FileNotFoundError:
-            fname = get_tmpfile("brown_fasttext.model")
-            msg = "{} not found. Will train FastText with brown from scratch"
+            msg = "{} not found, will train FastText with brown corpus..."
             logger.warn(msg.format(fname))
             model = FastTextWrapper(sentences=brown.sents(), **kwargs)
             model.save(fname)
     else:
         model = FastTextWrapper(sentences=brown.sents(), **kwargs)
+
     return model
 
 
-class FastTextWrapper(object):
+class FastTextWrapper(FastText):
     """A wrapper for the FastText model from the GenSim library"""
 
     def __init__(
-        self,
-        sentences,
-        size=8,
-        window=5,
-        min_count=5,
-        seed=42,
-        load=False,
-        load_fname=None,
-        **kwargs
+        self, sentences, size=8, window=5, min_count=5, seed=42, **kwargs
     ):
         """Initialize the model
 
@@ -83,36 +72,21 @@ class FastTextWrapper(object):
             Ignores all words with total frequency lower than this value
         seed : int (default is 42)
             Sets the random seed
-        load : bool (default is False)
-            Load a FastText model from `/tmp/`
-        load_fname : str (default is None)
-            Filename of the model to load. Ignored when load is False
         **kwargs : dict
             Keyword arguments
         """
-        self.logger = logging.getLogger(__name__)
         self.size = size
         self.seed = seed
-        if load:
-            fname = get_tmpfile(load_fname)
-            self.model = FastText.load(fname)
-        else:
-            self.model = FastText(
-                sentences=sentences,
-                size=size,
-                window=window,
-                min_count=min_count,
-                seed=seed,
-                **kwargs
-            )
+        super(FastTextWrapper, self).__init__(
+            sentences=sentences,
+            size=size,
+            window=window,
+            min_count=min_count,
+            seed=seed,
+            **kwargs
+        )
         # Set random seed
         np.random.seed(self.seed)
-
-    def save(self, fname):
-        """Wrapper for FastText.save method"""
-        self.model.save(fname)
-        msg = "FastText model saved at {}"
-        self.logger(msg.format(fname))
 
     def transform(self, X):
         """Transform a sentence into its vector representation
@@ -132,7 +106,7 @@ class FastTextWrapper(object):
         for word in sentence:
             try:
                 # Obtain vector from FastText model
-                v = self.model.wv.word_vec(word)
+                v = self.wv.word_vec(word)
             except KeyError:
                 # If `word` is not in hashed corpus, then
                 # just generate a random vector

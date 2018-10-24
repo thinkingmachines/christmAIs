@@ -21,6 +21,8 @@ def get_fasttext_pretrained(load=False, **kwargs):
 
     Parameters
     ----------
+    load : bool (default is False)
+        Load a trained FastText.model from disk
     **kwargs : dict
         Keyword arguments similar to FastTextWrapper
 
@@ -33,11 +35,13 @@ def get_fasttext_pretrained(load=False, **kwargs):
     logger = logging.getLogger(__name__)
     if load:
         try:
-            fname = get_tmpfile("brown_fasttext.model")
-            model = FastText.load(fname)
-            msg = "FastText model found at {}"
-            logger.info(msg.format(fname))
+            model = FastTextWrapper(
+                sentences=brown.sents(),
+                load=True,
+                load_fname="brown_fasttext.model",
+            )
         except FileNotFoundError:
+            fname = get_tmpfile("brown_fasttext.model")
             msg = "{} not found. Will train FastText with brown from scratch"
             logger.warn(msg.format(fname))
             model = FastTextWrapper(sentences=brown.sents(), **kwargs)
@@ -51,7 +55,15 @@ class FastTextWrapper(object):
     """A wrapper for the FastText model from the GenSim library"""
 
     def __init__(
-        self, sentences, size=8, window=5, min_count=5, seed=42, **kwargs
+        self,
+        sentences,
+        size=8,
+        window=5,
+        min_count=5,
+        seed=42,
+        load=False,
+        load_fname=None,
+        **kwargs
     ):
         """Initialize the model
 
@@ -71,20 +83,28 @@ class FastTextWrapper(object):
             Ignores all words with total frequency lower than this value
         seed : int (default is 42)
             Sets the random seed
+        load : bool (default is False)
+            Load a FastText model from `/tmp/`
+        load_fname : str (default is None)
+            Filename of the model to load. Ignored when load is False
         **kwargs : dict
             Keyword arguments
         """
+        self.logger = logging.getLogger(__name__)
         self.size = size
         self.seed = seed
-        self.model = FastText(
-            sentences=sentences,
-            size=size,
-            window=window,
-            min_count=min_count,
-            seed=seed,
-            **kwargs
-        )
-        self.logger = logging.getLogger(__name__)
+        if load:
+            fname = get_tmpfile(load_fname)
+            self.model = FastText.load(fname)
+        else:
+            self.model = FastText(
+                sentences=sentences,
+                size=size,
+                window=window,
+                min_count=min_count,
+                seed=seed,
+                **kwargs
+            )
         # Set random seed
         np.random.seed(self.seed)
 

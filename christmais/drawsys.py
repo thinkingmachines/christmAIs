@@ -17,10 +17,10 @@ from sklearn.preprocessing import minmax_scale
 logging.basicConfig(level=logging.INFO)
 
 
-class DrawingSystem:
-    """Drawing System
+class Artist:
+    """Artist class for the drawing system
 
-    For the drawing system, the embedding vector corresponds to the computed
+    For the Artist, the embedding vector corresponds to the computed
     word embeddings of the FastTextWrapper. These values serve as a seed to
     generate the images
 

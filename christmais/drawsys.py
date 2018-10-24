@@ -30,21 +30,21 @@ class Artist:
     Simply initialize the DrawingSystem with the embedding (an 8-element
     vector):
 
-    .. code-block::python
+    .. code-block:: python
 
         import numpy as np
-        from christmais.drawsys import DrawingSystem
+        from christmais.drawsys import Artist
 
         # Let's create a "random" embedding seed
         embedding = np.random.uniform(low=0, high=1, size=8)
-        d = DrawingSystem(embedding)
+        artist = Artist(embedding)
 
     This automatically computes the background colors and other required
     artifacts. In order to draw the resulting image, simply call:
 
-    .. code-block::python
+    .. code-block:: python
 
-        d.draw()
+        artist.draw()
     """
 
     def __init__(self, embedding, dims=(224, 224)):
@@ -61,7 +61,6 @@ class Artist:
         self.emb = embedding
         self.dims = dims
         self.colors = self._generate_colors(self.emb)
-        # Define bottom widths
 
     def draw(self, circle_density=10, line_density=10):
         """Draw the resulting image

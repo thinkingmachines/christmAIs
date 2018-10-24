@@ -26,8 +26,3 @@ $ virtualenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt # or requirements-dev.txt
 ```
-
-## Usage
-
-
-

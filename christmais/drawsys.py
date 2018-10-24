@@ -23,6 +23,28 @@ class DrawingSystem:
     For the drawing system, the embedding vector corresponds to the computed
     word embeddings of the FastTextWrapper. These values serve as a seed to
     generate the images
+
+    Usage
+    -----
+
+    Simply initialize the DrawingSystem with the embedding (an 8-element
+    vector):
+
+    .. code-block::python
+
+        import numpy as np
+        from christmais.drawsys import DrawingSystem
+
+        # Let's create a "random" embedding seed
+        embedding = np.random.uniform(low=0, high=1, size=8)
+        d = DrawingSystem(embedding)
+
+    This automatically computes the background colors and other required
+    artifacts. In order to draw the resulting image, simply call:
+
+    .. code-block::python
+
+        d.draw()
     """
 
     def __init__(self, embedding, dims=(224, 224)):
@@ -30,7 +52,7 @@ class DrawingSystem:
 
         Parameters
         ----------
-        embedding : np.ndarray
+        embedding : numpy.ndarray
             Vector of size 8 for seeding the colors
         dims : tuple of size 2
             Dimensions of the resulting image
@@ -41,7 +63,17 @@ class DrawingSystem:
         self.colors = self._generate_colors(self.emb)
 
     def draw(self):
-        """Draw given the required colors"""
+        """Draw the resulting image
+
+        This is the main workhorse for the drawing system. Although the
+        background colors were generated randomly, you can override them by
+        setting the colors attribute with an RGB tuple
+
+        Returns
+        -------
+        PIL.Image
+            The resulting image
+        """
         # Draw background
         im = Image.new("RGB", self.dims, self.colors["background"])
         draw = ImageDraw.Draw(im, "RGB")
@@ -85,14 +117,14 @@ class DrawingSystem:
 
         Parameters
         ----------
-        x : np.ndarray or float
+        x : numpy.ndarray or float
             Seed vector, usually the embedding
         nb_candidates : int (default is 10)
             Number of candidates to generate
 
         Return
         ------
-        np.ndarray
+        numpy.ndarray
             Candidate coordinates sampled from the seed vector
             with shape (nb_candidates, x.shape[0])
         """
@@ -104,7 +136,7 @@ class DrawingSystem:
 
         Parameters
         ----------
-        x : np.ndarray or float
+        x : numpy.ndarray or float
             Vector or value to interpolate
         current : tuple
             Current range
@@ -113,7 +145,7 @@ class DrawingSystem:
 
         Returns
         -------
-        np.ndarray or int
+        numpy.ndarray or int
             The value of vector x when interpolated to target range
         """
         y = np.interp(x, current, target)
@@ -128,7 +160,7 @@ class DrawingSystem:
 
         Parameters
         ----------
-        x : np.ndarray
+        x : numpy.ndarray
             Seed vector, usually the embedding
 
         Returns

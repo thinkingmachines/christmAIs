@@ -7,5 +7,7 @@ import pytest
 from christmais.model import FastTextWrapper, get_fasttext_pretrained
 
 
-def test_stub():
+@pytest.parameterize("load", [True, False])
+def test_model_load(load):
+    """Test if a FastText model is always loaded given any option"""
     pass

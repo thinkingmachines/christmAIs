@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
+"""Predict class and get the confidence of a target given an abstract art"""
+
 # Import standard library
-import io
 import operator
 import random
 
@@ -7,7 +10,6 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-from PIL import Image
 
 # Import from package
 import torch
@@ -23,7 +25,17 @@ random.seed(SEED)
 
 
 class Predictor:
-    def __init__(self, seed):
+    def __init__(self, models=["vgg16"], seed=42):
+        """Initialize the model
+
+        Parameters
+        ----------
+        models : list of str (default is ["vgg16"])
+            Define the models for prediction. Note that more models
+            can severely affect prediction time.
+        seed : int
+            Random seed
+        """
 
         # TODO: If labels is not None, do not download
         # def _get_labels()

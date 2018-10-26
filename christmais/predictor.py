@@ -1,14 +1,18 @@
+# Import standard library
 import io
+import operator
+import random
+
+# Import modules
+import matplotlib.pyplot as plt
+import numpy as np
 import requests
 from PIL import Image
-import matplotlib.pyplot as plt
 
+# Import from package
 import torch
 import torchvision
 from torch.autograd import Variable
-import numpy as np
-import random
-import operator
 
 SEED = 42
 

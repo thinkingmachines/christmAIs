@@ -17,19 +17,36 @@ import requests
 # Import from package
 import torch
 import torchvision
+from torchvision import models
 from torch.autograd import Variable
 
 logging.basicConfig(level=logging.INFO)
 LABEL_SOURCE_URL = "https://s3.amazonaws.com/outcome-blog/imagenet/labels.json"
+PRETRAINED_MODELS = {
+    "resnet152": models.resnet152,
+    "squeezenet1": models.squeezenet1_1,
+    "resnet50": models.resnet50,
+    "vgg16": models.vgg16,
+}
 
 
 class Predictor:
-    def __init__(self, models=["vgg16"], labels_file="labels.json", seed=42):
+    """A class for mapping an input image into an ImageNet class
+
+    The Predictor class uses a pretrained model of ResNet-152 for:
+        - finding the closest ImageNet class for a given abstract art or
+        - assigning a prediction confidence of an abstract art to a target
+          ImageNet class
+    """
+
+    def __init__(
+        self, models=["resnet152"], labels_file="labels.json", seed=42
+    ):
         """Initialize the model
 
         Parameters
         ----------
-        models : list of str (default is ["vgg16"])
+        models : list of str (default is ["resnet152"])
             Define the models for prediction. Note that more models
             can severely affect prediction time.
         labels_file : str
@@ -43,15 +60,8 @@ class Predictor:
         # Get labels
         self.labels = self._get_labels(labels_file)
 
-    #        self.models = {
-    #            "resnet152": torchvision.models.resnet152(pretrained=True),
-    #            "squeezenet1": torchvision.models.squeezenet1_1(pretrained=True),
-    #            "resnet50": torchvision.models.resnet50(pretrained=True),
-    #            "vgg16": torchvision.models.vgg16(pretrained=True),
-    #        }
-
     def _set_seed(self, seed):
-        """Set the random seed for pytorch, numpy, and core python
+        """Set the random seeds for pytorch, numpy, and core python
 
         Parameters
         ----------
@@ -189,7 +199,7 @@ class Predictor:
 	    size: tuple (default is (3,4))
 	        Size of each graph
 	    """
-        fig = plt.figure(figsize=(size[0] * len(results), size[1]))
+        plt.figure(figsize=(size[0] * len(results), size[1]))
         for idx, model in enumerate(results):
             top_values = dict(
                 sorted(

@@ -40,8 +40,7 @@ def test_predict(model_list):
     img = artist.draw()
     p = Predictor(models=model_list)
     score, results = p.predict(X=img, target="iron")
-    print(type(score), type(results))
-    assert isinstance(score, float)
+    assert isinstance(score, np.float32)
     assert isinstance(results, dict)
 
 
@@ -52,4 +51,4 @@ def test_predictor_preprocess():
     p = Predictor()
     out = p._preprocess(img)
     print(type(out))
-    assert isinstance(out, torch.autograd.variable.Variable)
+    assert isinstance(out, torch.autograd.Variable)

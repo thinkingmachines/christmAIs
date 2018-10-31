@@ -95,7 +95,7 @@ class Artist:
         Parameters
         ----------
         im : PIL.Image
-            Generate image
+            Generated image
         draw : PIL.ImageDraw
             Drawable PIL object
         layers : dict with keys ["layer1", "layer2", "layer3"]

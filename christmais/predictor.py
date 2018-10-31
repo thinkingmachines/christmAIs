@@ -117,12 +117,14 @@ class Predictor:
             can severely affect prediction time.
         """
         try:
-            dict((model, PRETRAINED_MODELS[model]) for model in models)
+            mlist = dict((model, PRETRAINED_MODELS[model]) for model in models)
         except KeyError:
             msg = "Unrecognized model. Please choose among\
 resnet152, vgg16, squeezenet1, resnet50"
             self.logger.exception(msg)
             raise
+        else:
+            return mlist
 
     def predict(self, X, target, top_classes=5):
         """Calculates the score for each input image relative to the target label

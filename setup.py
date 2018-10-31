@@ -7,11 +7,11 @@ with open("README.md", encoding="utf8") as readme_file:
     readme = readme_file.read()
 
 requirements = [
-"nltk==3.2.4",
-"gensim==3.5.0",
-"numpy==1.14.2",
-"Pillow==5.3.0",
-"scikit_learn==0.20.0",
+    "nltk==3.2.4",
+    "gensim==3.5.0",
+    "numpy==1.14.2",
+    "Pillow==5.3.0",
+    "scikit_learn==0.20.0",
 ]
 
 test_requirements = [
@@ -53,4 +53,3 @@ setup(
     ],
     test_suite="tests",
 )
-

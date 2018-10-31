@@ -148,10 +148,14 @@ resnet152, vgg16, squeezenet1, resnet50"
 
         indices = [idx for idx, lbl in self.labels.items() if target == lbl[0]]
         X = self._preprocess(X)
+        # FIXME
+        print(indices)
 
         scores, results = [], {}
         for model_name, model in self.models.items():
             probs = self._model_eval(model, X)
+            # FIXME
+            print(probs)
             scores.append(probs[0][indices[0]])
             result = {
                 label[0]: probs[0][index]

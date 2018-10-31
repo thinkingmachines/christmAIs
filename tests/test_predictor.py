@@ -3,6 +3,7 @@
 # Import modules
 import pytest
 import numpy as np
+import torch
 
 # Import from package
 from christmais.predictor import Predictor
@@ -37,7 +38,18 @@ def test_predict(model_list):
     """Test if predict returns expected results"""
     artist = Artist(np.random.uniform(size=8))
     img = artist.draw()
-    p = Predictor(model_list)
-    score, results = p.predict(img, target="iron")
+    p = Predictor(models=model_list)
+    score, results = p.predict(X=img, target="iron")
+    print(type(score), type(results))
     assert isinstance(score, float)
     assert isinstance(results, dict)
+
+
+def test_predictor_preprocess():
+    """Test private method _preprocess()"""
+    artist = Artist(np.random.uniform(size=8))
+    img = artist.draw()
+    p = Predictor()
+    out = p._preprocess(img)
+    print(type(out))
+    assert isinstance(out, torch.autograd.variable.Variable)

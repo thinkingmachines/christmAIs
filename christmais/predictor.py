@@ -22,10 +22,10 @@ from torch.autograd import Variable
 logging.basicConfig(level=logging.INFO)
 LABEL_SOURCE_URL = "https://s3.amazonaws.com/outcome-blog/imagenet/labels.json"
 PRETRAINED_MODELS = {
-    "resnet152": models.resnet152,
-    "squeezenet1": models.squeezenet1_1,
-    "resnet50": models.resnet50,
-    "vgg16": models.vgg16,
+    "resnet152": models.resnet152(pretrained=True),
+    "squeezenet1": models.squeezenet1_1(pretrained=True),
+    "resnet50": models.resnet50(pretrained=True),
+    "vgg16": models.vgg16(pretrained=True),
 }
 
 
@@ -63,6 +63,8 @@ class Predictor:
             "mean": [0.485, 0.456, 0.406],
             "std": [0.229, 0.224, 0.225],
         }
+        # Get models
+        self.models = self._get_models(models)
 
     def _set_seed(self, seed):
         """Set the random seeds for pytorch, numpy, and core python
@@ -104,6 +106,17 @@ class Predictor:
                 f.write(r.content)
             labels = json.load(f)
         return labels
+
+    def _get_models(self, models):
+        """Get pretrained models for chosen model
+
+        Parameters
+        ----------
+        models : list of str (default is ["resnet152"])
+            Define the models for prediction. Note that more models
+            can severely affect prediction time.
+        """
+        return dict((model, PRETRAINED_MODELS[model]) for model in models)
 
     def predict(self, X, target, top_classes=5):
         """Calculates the score for each input image relative to the target label

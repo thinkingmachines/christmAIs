@@ -16,8 +16,7 @@ import requests
 
 # Import from package
 import torch
-import torchvision
-from torchvision import models
+from torchvision import models, transforms
 from torch.autograd import Variable
 
 logging.basicConfig(level=logging.INFO)
@@ -59,6 +58,11 @@ class Predictor:
         self._set_seed(seed)
         # Get labels
         self.labels = self._get_labels(labels_file)
+        # Distributions
+        self.distribs = {
+            "mean": [0.485, 0.456, 0.406],
+            "std": [0.229, 0.224, 0.225],
+        }
 
     def _set_seed(self, seed):
         """Set the random seeds for pytorch, numpy, and core python
@@ -101,34 +105,34 @@ class Predictor:
             labels = json.load(f)
         return labels
 
-    def predict(self, inp_file, target_label):
+    def predict(self, X, target, top_classes=5):
         """Calculates the score for each input image relative to the target label
 
         Parameters
         ----------
-        inp_file: str
-            Path to input image
-        target_label: str
-            An imagenet class label
+        X : np.ndarray
+            Input image matrix
+        target: str
+            The target ImageNet class label.
+        top_classes : int (default is 5)
+            Number of top classes to return
 
         Returns
         -------
-        dict
-            Contains the class probabilities of each imagenet label for each model
-	"""
+        (float, dict)
+            A tuple of values where float is the class probability of the
+            target ImageClass, and dict contains the top_classes classes with
+            the highest class probabilities
+        """
 
         # TODO: Add error catching whenever KeyError/ValueError
 
-        indices = [
-            index
-            for index, labels in self.labels.items()
-            if target_label == labels[0]
-        ]
-        img_variable = self._preprocess(inp_file)
+        indices = [idx for idx, lbl in self.labels.items() if target == lbl[0]]
+        X = self._preprocess(X)
 
         scores, results = [], {}
         for model_name, model in self.models.items():
-            probs = self.model_eval(model, img_variable)
+            probs = self.model_eval(model, X)
             scores.append(probs[0][indices[0]])
             result = {
                 label[0]: probs[0][index]
@@ -137,6 +141,41 @@ class Predictor:
             results[model_name] = result
 
         return np.mean(scores), results
+
+    def _preprocess(self, X):
+        """Transform the input image
+
+        The preprocessing pipeline performs the following operations:
+            - Resize an image of any given size into (224, 224)
+            - Performs a CenterCrop given size 224
+            - Typecasts the numpy.ndarray into tensor (ToTensor)
+            - Normalizes the input image given self.distribs
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Input image matrix
+
+        Returns
+        -------
+        torch.autograd.variable
+            Torch variable of the transformed image
+        """
+        # Create preprocessing pipeline
+        # fmt: off
+        preprocess = transforms.Compose([
+                transforms.Resize(224),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    self.distribs["mean"],
+                    self.distribs["std"])
+                ])
+        # fmt: on
+        img_tensor = preprocess(X)
+        img_tensor.unsqueeze_(0)
+        img_variable = Variable(img_tensor)
+        return img_variable
 
     def _model_eval(self, model, img_variable):
         """Calculate the probabilities per imagenet class for a given image
@@ -155,38 +194,6 @@ class Predictor:
         sm = torch.nn.Softmax()
         probs = sm(fc_out)
         return probs.data.numpy()
-
-    def _preprocess(self, img_pil):
-        """Applies transforms to the input image
-
-	    Parameters
-	    ----------
-	    img_file: PIL.Image
-	        Path to input image
-
-	    Returns
-	    -------
-	    torch.autograd.variable
-	        Torch variable of the transformed image
-	    """
-        normalize = torchvision.transforms.Normalize(
-            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-        )
-        preprocess = torchvision.transforms.Compose(
-            [
-                torchvision.transforms.Resize(224),
-                torchvision.transforms.CenterCrop(224),
-                torchvision.transforms.ToTensor(),
-                normalize,
-            ]
-        )
-
-        # img_pil = Image.open(img_file)
-        img_tensor = preprocess(img_pil)
-        img_tensor.unsqueeze_(0)
-        img_variable = Variable(img_tensor)
-        return img_variable
-
 
     def plot_results(self, results, top_n=10, size=(3, 4)):
         """Plots the probabilities of the top n labels

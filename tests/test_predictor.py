@@ -38,6 +38,6 @@ def test_predict(model_list):
     artist = Artist(np.random.uniform(size=8))
     img = artist.draw()
     p = Predictor(model_list)
-    score, results = p.predict(img)
+    score, results = p.predict(img, target="iron")
     assert isinstance(score, float)
     assert isinstance(results, dict)

@@ -101,12 +101,49 @@ class Predictor:
             labels = json.load(f)
         return labels
 
+    def predict(self, inp_file, target_label):
+        """Calculates the score for each input image relative to the target label
+
+        Parameters
+        ----------
+        inp_file: str
+            Path to input image
+        target_label: str
+            An imagenet class label
+
+        Returns
+        -------
+        dict
+            Contains the class probabilities of each imagenet label for each model
+	"""
+
+        # TODO: Add error catching whenever KeyError/ValueError
+
+        indices = [
+            index
+            for index, labels in self.labels.items()
+            if target_label == labels[0]
+        ]
+        img_variable = self._preprocess(inp_file)
+
+        scores, results = [], {}
+        for model_name, model in self.models.items():
+            probs = self.model_eval(model, img_variable)
+            scores.append(probs[0][indices[0]])
+            result = {
+                label[0]: probs[0][index]
+                for index, label in self.labels.items()
+            }
+            results[model_name] = result
+
+        return np.mean(scores), results
+
     def _model_eval(self, model, img_variable):
-        """Calculates the probabilities per imagenet class for a given image
+        """Calculate the probabilities per imagenet class for a given image
 
 	    Parameters
 	    ----------
-	    model:
+	    model: torchvision.model
 	        A Pytorch CNN model pretrained on Imagenet
 
 	    Returns
@@ -150,42 +187,6 @@ class Predictor:
         img_variable = Variable(img_tensor)
         return img_variable
 
-    def get_score(self, inp_file, target_label):
-        """Calculates the score for each input image relative to the target label
-
-	    Parameters
-	    ----------
-	    inp_file: str
-	        Path to input image
-	    target_label: str
-	        An imagenet class label
-
-	    Returns
-	    -------
-	    dict
-	        Contains the class probabilities of each imagenet label for each model
-	    """
-
-        # TODO: Add error catching whenever KeyError/ValueError
-
-        indices = [
-            index
-            for index, labels in self.labels.items()
-            if target_label == labels[0]
-        ]
-        img_variable = self._preprocess(inp_file)
-
-        scores, results = [], {}
-        for model_name, model in self.models.items():
-            probs = self.model_eval(model, img_variable)
-            scores.append(probs[0][indices[0]])
-            result = {
-                label[0]: probs[0][index]
-                for index, label in self.labels.items()
-            }
-            results[model_name] = result
-
-        return np.mean(scores), results
 
     def plot_results(self, results, top_n=10, size=(3, 4)):
         """Plots the probabilities of the top n labels

@@ -15,7 +15,7 @@ def test_predictor_get_labels(labels_file):
     assert isinstance(labels, dict)
 
 
-@pytest.mark.parametrize("models", [["resnet152"], ["resnet152", "vgg16"]])
+@pytest.mark.parametrize("model_list", [["resnet152"], ["resnet152", "vgg16"]])
 def test_predictor_get_models(model_list):
     """Test private method _get_models()"""
     predictor = Predictor()

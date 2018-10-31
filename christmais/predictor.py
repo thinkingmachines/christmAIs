@@ -95,16 +95,21 @@ class Predictor:
 
         try:
             with open(labels_file, "r") as f:
+                msg = "Loading labels file {}"
+                logging.info(msg.format(labels_file))
                 labels = json.load(f)
+                # Just typecast the keys
+                labels = {int(k): v for k, v in labels.items()}
         except FileNotFoundError:
             msg = "File labels.json not found in /tmp/, attempting download from {}"
             logging.info(msg.format(LABEL_SOURCE_URL))
-            r = requests.get(LABEL_SOURCE_URL, allow_redirects=True)
-            with open(labels_file, "wb") as f:
+            r = requests.get(LABEL_SOURCE_URL).json().items()
+            lbl = {int(k): v.split(", ") for k, v in r}
+            with open(labels_file, "w") as f:
                 msg = "File labels.json stored in {}"
                 logging.info(msg.format(labels_file))
-                f.write(r.content)
-            labels = r.content
+                json.dump(lbl, f, sort_keys=True, indent=4)
+            labels = lbl
         return labels
 
     def _get_models(self, models):
@@ -145,18 +150,14 @@ resnet152, vgg16, squeezenet1, resnet50"
             target ImageClass, and dict contains the top_classes classes with
             the highest class probabilities
         """
-
+        # Get label indices for the chosen target class
         indices = [idx for idx, lbl in self.labels.items() if target == lbl[0]]
         X = self._preprocess(X)
-        # FIXME
-        print(self.labels.items())
         print(indices)
 
         scores, results = [], {}
         for model_name, model in self.models.items():
             probs = self._model_eval(model, X)
-            # FIXME
-            print(probs)
             scores.append(probs[0][indices[0]])
             result = {
                 label[0]: probs[0][index]

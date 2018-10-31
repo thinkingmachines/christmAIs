@@ -105,7 +105,11 @@ class Predictor:
                 logging.info(msg.format(labels_file))
                 f.write(r.content)
             labels = json.load(f)
-        return labels
+        finally:
+        	# FIXME
+        	labels = {int(key): value.split(", ") for (key, value) in requests.get(LABEL_SOURCE_URL, allow_redirects=True).json().items()}
+      
+        	return labels
 
     def _get_models(self, models):
         """Get pretrained models for chosen model
@@ -139,13 +143,13 @@ class Predictor:
         """
 
         # TODO: Add error catching whenever KeyError/ValueError
-
+        # FIXME: no need to turn into np.ndarray
         indices = [idx for idx, lbl in self.labels.items() if target == lbl[0]]
         X = self._preprocess(X)
 
         scores, results = [], {}
         for model_name, model in self.models.items():
-            probs = self.model_eval(model, X)
+            probs = self._model_eval(model, X)
             scores.append(probs[0][indices[0]])
             result = {
                 label[0]: probs[0][index]

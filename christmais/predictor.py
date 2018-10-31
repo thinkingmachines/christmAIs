@@ -105,9 +105,6 @@ class Predictor:
                 logging.info(msg.format(labels_file))
                 f.write(r.content)
             labels = r.content
-        # finally:
-        # FIXME
-        # labels = {int(key): value.split(", ") for (key, value) in requests.get(LABEL_SOURCE_URL, allow_redirects=True).json().items()}
         return labels
 
     def _get_models(self, models):
@@ -119,7 +116,13 @@ class Predictor:
             Define the models for prediction. Note that more models
             can severely affect prediction time.
         """
-        return dict((model, PRETRAINED_MODELS[model]) for model in models)
+        try:
+            dict((model, PRETRAINED_MODELS[model]) for model in models)
+        except KeyError:
+            msg = "Unrecognized model. Please choose among\
+resnet152, vgg16, squeezenet1, resnet50"
+            self.logger.exception(msg)
+            raise
 
     def predict(self, X, target, top_classes=5):
         """Calculates the score for each input image relative to the target label

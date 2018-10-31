@@ -153,7 +153,6 @@ resnet152, vgg16, squeezenet1, resnet50"
         # Get label indices for the chosen target class
         indices = [idx for idx, lbl in self.labels.items() if target == lbl[0]]
         X = self._preprocess(X)
-        print(indices)
 
         scores, results = [], {}
         for model_name, model in self.models.items():

@@ -199,15 +199,15 @@ resnet152, vgg16, squeezenet1, resnet50"
     def _model_eval(self, model, img_variable):
         """Calculate the probabilities per imagenet class for a given image
 
-	    Parameters
-	    ----------
-	    model: torchvision.model
-	        A Pytorch CNN model pretrained on Imagenet
+        Parameters
+        ----------
+        model: torchvision.model
+            A Pytorch CNN model pretrained on Imagenet
 
-	    Returns
-	    -------
+        Returns
+        -------
 
-	    """
+	"""
         model.eval()
         fc_out = model(img_variable)
         sm = torch.nn.Softmax()

@@ -105,11 +105,10 @@ class Predictor:
                 logging.info(msg.format(labels_file))
                 f.write(r.content)
             labels = json.load(f)
-        #finally:
-        	# FIXME
-        	#labels = {int(key): value.split(", ") for (key, value) in requests.get(LABEL_SOURCE_URL, allow_redirects=True).json().items()}
-        finally:
-            return labels
+        # finally:
+        # FIXME
+        # labels = {int(key): value.split(", ") for (key, value) in requests.get(LABEL_SOURCE_URL, allow_redirects=True).json().items()}
+        return labels
 
     def _get_models(self, models):
         """Get pretrained models for chosen model

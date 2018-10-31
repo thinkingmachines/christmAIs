@@ -149,6 +149,7 @@ resnet152, vgg16, squeezenet1, resnet50"
         indices = [idx for idx, lbl in self.labels.items() if target == lbl[0]]
         X = self._preprocess(X)
         # FIXME
+        print(self.labels.items())
         print(indices)
 
         scores, results = [], {}

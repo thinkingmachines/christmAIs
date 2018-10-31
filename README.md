@@ -95,3 +95,7 @@ seed = model.transform("Thinking Machines Data Science")
 artist = Artist(seed, dims=(224, 224)) 
 artist.draw()
 ```
+
+![](assets/artist1.png)
+![](assets/artist2.png)
+![](assets/artist3.png)

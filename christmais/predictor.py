@@ -104,7 +104,7 @@ class Predictor:
                 msg = "File labels.json stored in {}"
                 logging.info(msg.format(labels_file))
                 f.write(r.content)
-            labels = json.load(labels_file)
+            labels = r.content
         # finally:
         # FIXME
         # labels = {int(key): value.split(", ") for (key, value) in requests.get(LABEL_SOURCE_URL, allow_redirects=True).json().items()}

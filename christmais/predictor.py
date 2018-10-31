@@ -3,10 +3,13 @@
 """Predict class and get the confidence of a target given an abstract art"""
 
 # Import standard library
+import json
 import operator
 import random
+import logging
 
 # Import modules
+from gensim.test.utils import get_tmpfile
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
@@ -16,16 +19,12 @@ import torch
 import torchvision
 from torch.autograd import Variable
 
-SEED = 42
-
-# init param
-torch.manual_seed(SEED)
-np.random.seed(SEED)
-random.seed(SEED)
+logging.basicConfig(level=logging.INFO)
+LABEL_SOURCE_URL = "https://s3.amazonaws.com/outcome-blog/imagenet/labels.json"
 
 
 class Predictor:
-    def __init__(self, models=["vgg16"], seed=42):
+    def __init__(self, models=["vgg16"], labels_file="labels.json", seed=42):
         """Initialize the model
 
         Parameters
@@ -33,26 +32,64 @@ class Predictor:
         models : list of str (default is ["vgg16"])
             Define the models for prediction. Note that more models
             can severely affect prediction time.
+        labels_file : str
+            Filename where ImageNet labels are stored
         seed : int
             Random seed
         """
+        self.logger = logging.getLogger(__name__)
+        # Set random seed
+        self._set_seed(seed)
+        # Get labels
+        self.labels = self._get_labels(labels_file)
 
-        # TODO: If labels is not None, do not download
-        # def _get_labels()
-        self.labels_url = (
-            "https://s3.amazonaws.com/outcome-blog/imagenet/labels.json"
-        )
-        self.labels = {
-            int(key): value.split(", ")
-            for (key, value) in requests.get(self.labels_url).json().items()
-        }
+    #        self.models = {
+    #            "resnet152": torchvision.models.resnet152(pretrained=True),
+    #            "squeezenet1": torchvision.models.squeezenet1_1(pretrained=True),
+    #            "resnet50": torchvision.models.resnet50(pretrained=True),
+    #            "vgg16": torchvision.models.vgg16(pretrained=True),
+    #        }
 
-        self.models = {
-            "resnet152": torchvision.models.resnet152(pretrained=True),
-            "squeezenet1": torchvision.models.squeezenet1_1(pretrained=True),
-            "resnet50": torchvision.models.resnet50(pretrained=True),
-            "vgg16": torchvision.models.vgg16(pretrained=True),
-        }
+    def _set_seed(self, seed):
+        """Set the random seed for pytorch, numpy, and core python
+
+        Parameters
+        ----------
+        seed : int
+            Random seed
+        """
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+
+    def _get_labels(self, labels_file):
+        """Get labels from the source url
+
+        Parameters
+        ----------
+        labels_file : str
+            Filename where ImageNet labels are stored
+
+        Returns
+        -------
+        dict
+            Labels and numeric keys for ImageNet classes
+        """
+        labels_file = get_tmpfile(labels_file)
+
+        try:
+            with open(labels_file, "r") as f:
+                labels = json.load(f)
+        except FileNotFoundError:
+            msg = "File labels.json not found in /tmp/, attempting download from {}"
+            logging.info(msg.format(LABEL_SOURCE_URL))
+            r = requests.get(LABEL_SOURCE_URL, allow_redirects=True)
+            with open(labels_file, "wb") as f:
+                msg = "File labels.json stored in {}"
+                logging.info(msg.format(labels_file))
+                f.write(r.content)
+            labels = json.load(f)
+        return labels
 
     def _model_eval(self, model, img_variable):
         """Calculates the probabilities per imagenet class for a given image

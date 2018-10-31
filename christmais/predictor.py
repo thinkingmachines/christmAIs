@@ -4,20 +4,20 @@
 
 # Import standard library
 import json
+import logging
 import operator
 import random
-import logging
 
 # Import modules
-from gensim.test.utils import get_tmpfile
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
+from gensim.test.utils import get_tmpfile
 
 # Import from package
 import torch
-from torchvision import models, transforms
 from torch.autograd import Variable
+from torchvision import models, transforms
 
 logging.basicConfig(level=logging.INFO)
 LABEL_SOURCE_URL = "https://s3.amazonaws.com/outcome-blog/imagenet/labels.json"

@@ -12,6 +12,7 @@ trial.ipynb
 
 # Other not important stuff
 .vscode
+.idea/
 
 # Distribution / packaging
 .Python

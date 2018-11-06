@@ -99,3 +99,35 @@ artist.draw()
 ![](assets/artist1.png)
 ![](assets/artist2.png)
 ![](assets/artist3.png)
+
+### Map an image into an ImageNet class
+
+The generated image can then be used as an input to a classifier trained on ImageNet.
+You can supply an ImageNet class and it will return the probability (or confidence)
+that this image looks like this class.
+
+```python
+from christmais import Predictor
+
+# Map text to seed
+model = get_fasttext_pretrained(load=True)
+seed = model.transform("Thinking Machines Data Science")
+
+# Map seed to image
+artist = Artist(seed, dims=(224, 224)) 
+img = artist.draw()
+
+# Map image to ImageNet class
+# We want to check how well the class recognizes the image as an "iron"
+predictor = Predictor()
+score, results = predictor.predict(X=img, target="iron")
+```
+
+We can then print the results. Since there is no optimization happening yet,
+don't expect that the score is high at the very start!
+
+```python
+>>> print(score)
+0.0003216064
+```
+

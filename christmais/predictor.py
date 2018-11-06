@@ -211,8 +211,9 @@ resnet152, vgg16, squeezenet1, resnet50"
 
         Returns
         -------
-
-	"""
+        numpy.ndarray
+            The probability measures for the given class
+        """
         model.eval()
         fc_out = model(img_variable)
         sm = torch.nn.Softmax()
@@ -222,15 +223,15 @@ resnet152, vgg16, squeezenet1, resnet50"
     def plot_results(self, results, top_n=10, size=(3, 4)):
         """Plots the probabilities of the top n labels
 
-	    Parameters
-	    ----------
-	    results : dict
-	        Contains the class probabilities of each imagenet label for each model
-	    top_n : int (default is 10)
-	        The number of imagenet labels to plot, for each model
-	    size: tuple (default is (3,4))
-	        Size of each graph
-	    """
+        Parameters
+        ----------
+        results : dict
+            Contains the class probabilities of each imagenet label for each model
+        top_n : int (default is 10)
+            The number of imagenet labels to plot, for each model
+        size: tuple (default is (3,4))
+            Size of each graph
+        """
         plt.figure(figsize=(size[0] * len(results), size[1]))
         for idx, model in enumerate(results):
             top_values = dict(

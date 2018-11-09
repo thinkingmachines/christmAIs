@@ -5,7 +5,6 @@ __pycache__/
 
 # Ipython notebooks
 .ipynb_checkpoints
-trial.ipynb
 
 # C extensions
 *.so

@@ -20,12 +20,12 @@ from torch.autograd import Variable
 from torchvision import models, transforms
 
 logging.basicConfig(level=logging.INFO)
-LABEL_SOURCE_URL = "https://s3.amazonaws.com/outcome-blog/imagenet/labels.json"
+LABEL_SOURCE_URL = 'https://s3.amazonaws.com/outcome-blog/imagenet/labels.json'
 PRETRAINED_MODELS = {
-    "resnet152": models.resnet152(pretrained=True),
-    "squeezenet1": models.squeezenet1_1(pretrained=True),
-    "resnet50": models.resnet50(pretrained=True),
-    "vgg16": models.vgg16(pretrained=True),
+    'resnet152': models.resnet152(pretrained=True),
+    'squeezenet1': models.squeezenet1_1(pretrained=True),
+    'resnet50': models.resnet50(pretrained=True),
+    'vgg16': models.vgg16(pretrained=True),
 }
 
 
@@ -39,13 +39,13 @@ class Predictor:
     """
 
     def __init__(
-        self, models=["resnet152"], labels_file="labels.json", seed=42
+        self, models=['resnet152'], labels_file='labels.json', seed=42
     ):
         """Initialize the model
 
         Parameters
         ----------
-        models : list of str (default is ["resnet152"])
+        models : list of str (default is ['resnet152'])
             Define the models for prediction. Note that more models
             can severely affect prediction time.
         labels_file : str
@@ -60,8 +60,8 @@ class Predictor:
         self.labels = self._get_labels(labels_file)
         # Distributions
         self.distribs = {
-            "mean": [0.485, 0.456, 0.406],
-            "std": [0.229, 0.224, 0.225],
+            'mean': [0.485, 0.456, 0.406],
+            'std': [0.229, 0.224, 0.225],
         }
         # Get models
         self.models = self._get_models(models)
@@ -94,19 +94,19 @@ class Predictor:
         labels_file = get_tmpfile(labels_file)
 
         try:
-            with open(labels_file, "r") as f:
-                msg = "Loading labels file {}"
+            with open(labels_file, 'r') as f:
+                msg = 'Loading labels file {}'
                 logging.info(msg.format(labels_file))
                 labels = json.load(f)
                 # Just typecast the keys
                 labels = {int(k): v for k, v in labels.items()}
         except FileNotFoundError:
-            msg = "File labels.json not found in /tmp/, attempting download from {}"
+            msg = 'File labels.json not found in /tmp/, attempting download from {}'
             logging.info(msg.format(LABEL_SOURCE_URL))
             r = requests.get(LABEL_SOURCE_URL).json().items()
-            lbl = {int(k): v.split(", ") for k, v in r}
-            with open(labels_file, "w") as f:
-                msg = "File labels.json stored in {}"
+            lbl = {int(k): v.split(', ') for k, v in r}
+            with open(labels_file, 'w') as f:
+                msg = 'File labels.json stored in {}'
                 logging.info(msg.format(labels_file))
                 json.dump(lbl, f, sort_keys=True, indent=4)
             labels = lbl
@@ -117,15 +117,15 @@ class Predictor:
 
         Parameters
         ----------
-        models : list of str (default is ["resnet152"])
+        models : list of str (default is ['resnet152'])
             Define the models for prediction. Note that more models
             can severely affect prediction time.
         """
         try:
             mlist = dict((model, PRETRAINED_MODELS[model]) for model in models)
         except KeyError:
-            msg = "Unrecognized model. Please choose among\
-resnet152, vgg16, squeezenet1, resnet50"
+            msg = 'Unrecognized model. Please choose among\
+resnet152, vgg16, squeezenet1, resnet50'
             self.logger.exception(msg)
             raise
         else:
@@ -186,16 +186,16 @@ resnet152, vgg16, squeezenet1, resnet50"
             Torch variable of the transformed image
         """
         # Create preprocessing pipeline
-        # fmt: off
-        preprocess = transforms.Compose([
+        preprocess = transforms.Compose(
+            [
                 transforms.Resize(224),
                 transforms.CenterCrop(224),
                 transforms.ToTensor(),
                 transforms.Normalize(
-                    self.distribs["mean"],
-                    self.distribs["std"])
-                ])
-        # fmt: on
+                    self.distribs['mean'], self.distribs['std']
+                ),
+            ]
+        )
         img_tensor = preprocess(X)
         img_tensor.unsqueeze_(0)
         img_variable = Variable(img_tensor)
@@ -245,7 +245,7 @@ resnet152, vgg16, squeezenet1, resnet50"
             plt.bar(
                 range(len(top_values)),
                 list(top_values.values()),
-                align="center",
+                align='center',
             )
             plt.xticks(
                 range(len(top_values)), list(top_values.keys()), rotation=90

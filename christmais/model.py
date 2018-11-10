@@ -34,11 +34,11 @@ def get_fasttext_pretrained(load=False, **kwargs):
     """
     logger = logging.getLogger(__name__)
     if load:
-        fname = get_tmpfile("brown_fasttext.model")
+        fname = get_tmpfile('brown_fasttext.model')
         try:
             model = FastTextWrapper.load(fname)
         except FileNotFoundError:
-            msg = "{} not found, will train FastText with brown corpus..."
+            msg = '{} not found, will train FastText with brown corpus...'
             logger.warn(msg.format(fname))
             model = FastTextWrapper(sentences=brown.sents(), **kwargs)
             model.save(fname)

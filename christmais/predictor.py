@@ -131,7 +131,7 @@ resnet152, vgg16, squeezenet1, resnet50'
         else:
             return mlist
 
-    def predict(self, X, target, top_classes=5):
+    def predict(self, X, target):
         """Calculates the score for each input image relative to the target label
 
         Parameters
@@ -147,8 +147,8 @@ resnet152, vgg16, squeezenet1, resnet50'
         -------
         (float, dict)
             A tuple of values where float is the class probability of the
-            target ImageClass, and dict contains the top_classes classes with
-            the highest class probabilities
+            target ImageClass, and dict contains classes its
+            class probabilities
         """
         # Get label indices for the chosen target class
         indices = [idx for idx, lbl in self.labels.items() if target == lbl[0]]

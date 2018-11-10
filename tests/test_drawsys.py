@@ -22,7 +22,7 @@ def test_artist_draw_circles_return_type(embedding, imdraw_canvas):
     im, draw = imdraw_canvas
     layers = {
         l: tuple(np.random.randint(0, 256, size=4))
-        for l in ["layer1", "layer2", "layer3"]
+        for l in ['layer1', 'layer2', 'layer3']
     }
     im_, draw_ = artist._draw_circles(im, draw, layers)
     assert isinstance(im_, Image.Image)
@@ -46,7 +46,7 @@ def test_artist_generate_coords_return_shape(embedding):
     assert cands.shape == (10, 8)
 
 
-@pytest.mark.parametrize("x", [np.random.uniform(size=8), 0.50, [0.25, 0.5]])
+@pytest.mark.parametrize('x', [np.random.uniform(size=8), 0.50, [0.25, 0.5]])
 def test_interpolate_run_without_fail(embedding, x):
     """Test private method _interpolate() if it runs without fail"""
     artist = Artist(embedding)
@@ -73,12 +73,12 @@ def test_gene_return_values(embedding):
     artist = Artist(embedding)
     artist.draw(density=10)
     gene = artist.get_gene()
-    assert (artist._circle_coords["layer1"] == gene[:, 0:6]).all()
-    assert (artist._circle_coords["layer2"] == gene[:, 6:12]).all()
-    assert (artist._circle_coords["layer3"] == gene[:, 12:18]).all()
-    assert (artist._circle_w["layer1"].ravel() == gene[:, 18]).all()
-    assert (artist._circle_w["layer2"].ravel() == gene[:, 19]).all()
-    assert (artist._circle_w["layer3"].ravel() == gene[:, 20]).all()
+    assert (artist._circle_coords['layer1'] == gene[:, 0:6]).all()
+    assert (artist._circle_coords['layer2'] == gene[:, 6:12]).all()
+    assert (artist._circle_coords['layer3'] == gene[:, 12:18]).all()
+    assert (artist._circle_w['layer1'].ravel() == gene[:, 18]).all()
+    assert (artist._circle_w['layer2'].ravel() == gene[:, 19]).all()
+    assert (artist._circle_w['layer3'].ravel() == gene[:, 20]).all()
     assert (artist._line_coords == gene[:, 21:25]).all()
     assert (artist._line_w.ravel() == gene[:, 25]).all()
 

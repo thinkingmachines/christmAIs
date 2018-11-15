@@ -5,7 +5,7 @@ import pytest
 import numpy as np
 
 # Import from package
-from christmais.model import FastTextWrapper, get_fasttext_pretrained
+from christmais.embedder import FastTextWrapper, get_fasttext_pretrained
 
 
 @pytest.mark.parametrize('load', [True, False])

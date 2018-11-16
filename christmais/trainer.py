@@ -89,7 +89,6 @@ class Trainer:
         population : int (default is 30)
             Number of artists created
         """
-        # imgs = [artist.draw() for artist in self.artists]
         pass
 
     def _batch_draw(self, genes=None):
@@ -102,8 +101,9 @@ class Trainer:
         list of PIL.Image
             drawn images from Artists
         """
-        if genes:
-            imgs = [a.draw_from_gene(g) for a, g in zip(genes, self.artists)]
+        if genes is not None:
+            self.logger.debug('Using genes as reference')
+            imgs = [a.draw_from_gene(g) for a, g in zip(self.artists, genes)]
         else:
             imgs = [a.draw() for a in self.artists]
         return imgs

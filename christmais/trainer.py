@@ -92,16 +92,32 @@ class Trainer:
         # imgs = [artist.draw() for artist in self.artists]
         pass
 
-    def _batch_draw(self):
+    def _batch_draw(self, genes=None):
         """Draw images from artists
+
+        If genes are supplied, then it uses draw as reference
 
         Returns
         -------
         list of PIL.Image
             drawn images from Artists
         """
-        imgs = [a.draw() for a in self.artists]
+        if genes:
+            imgs = [a.draw_from_gene(g) for a, g in zip(genes, self.artists)]
+        else:
+            imgs = [a.draw() for a in self.artists]
         return imgs
+
+    def _batch_get_genes(self):
+        """Obtain the genes from all generated artists
+
+        Returns
+        -------
+        np.ndarray
+            Usually of shape (population, 10, 26)
+        """
+        genes = [a.get_gene() for a in self.artists]
+        return np.stack(genes, axis=0)
 
     def _fitness_fcn(self, imgs, target):
         """Compute the fitness of the images given a target class label

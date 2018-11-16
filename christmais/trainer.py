@@ -92,6 +92,17 @@ class Trainer:
         # imgs = [artist.draw() for artist in self.artists]
         pass
 
+    def _batch_draw(self):
+        """Draw images from artists
+
+        Returns
+        -------
+        list of PIL.Image
+            drawn images from Artists
+        """
+        imgs = [a.draw() for a in self.artists]
+        return imgs
+
     def _fitness_fcn(self, imgs, target):
         """Compute the fitness of the images given a target class label
 

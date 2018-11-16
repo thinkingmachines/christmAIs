@@ -24,8 +24,8 @@ class Trainer:
         population=30,
         dims=(224, 224),
         seed=42,
-        predictor_kwargs=None,
-        embedding_kwargs=None,
+        predictor_kwargs={},
+        embedding_kwargs={},
     ):
         """Initialize the class
 
@@ -56,18 +56,26 @@ class Trainer:
 
     def reset(self):
         """Generate a new set of artists, predictor, and model"""
+        # Build a FastText model
+        self.model = get_fasttext_pretrained(
+            load=True, **self.embedding_kwargs
+        )
+        self.logger.info('Built FastText model')
+        # Transform the string using the FastText model
+        self.emb = self.model.transform(self.X)
+        self.logger.info('Embedding created for `{}`'.format(self.X))
+        # Generate a list of artists
         self.artists = [
             Artist(self.emb, self.dims) for i in range(self.population)
         ]
         self.logger.info('Created {} artists'.format(len(self.artists)))
+        # Create a predictor
         self.predictor = Predictor(seed=self.seed, **self.predictor_kwargs)
         self.logger.info(
-            'Initialized Predictor with {}'.format(self.predictor.models)
+            'Initialized Predictor with {}'.format(
+                self.predictor.models.keys()
+            )
         )
-        self.model = get_fasttext_pretrained(**self.embedding_kwargs)
-        self.logger.info('Built FastText model')
-        self.emb = self.model.transform(self.X)
-        self.logger.info('Embedding created for {}'.format(self.X))
 
     def train(self, target, steps=100, population=30):
         """Train and generate images

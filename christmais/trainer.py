@@ -77,7 +77,7 @@ class Trainer:
             )
         )
 
-    def train(self, target, steps=100, population=30):
+    def train(self, target, steps=100):
         """Train and generate images
 
         Parameters
@@ -86,8 +86,6 @@ class Trainer:
             The target ImageNet class label.
         steps : int (default is 100)
             The number of steps to run the optimization algorithm
-        population : int (default is 30)
-            Number of artists created
         """
         pass
 

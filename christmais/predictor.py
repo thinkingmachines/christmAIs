@@ -120,6 +120,12 @@ class Predictor:
         models : list of str (default is ['resnet152'])
             Define the models for prediction. Note that more models
             can severely affect prediction time.
+
+        Returns
+        -------
+        dict
+            Model dictionary with name as key and a pretrained package as its
+            value
         """
         try:
             mlist = dict((model, PRETRAINED_MODELS[model]) for model in models)

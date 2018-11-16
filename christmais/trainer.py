@@ -87,6 +87,11 @@ class Trainer:
         steps : int (default is 100)
             The number of steps to run the optimization algorithm
         """
+        # Generate initial population
+        # imgs = self._batch_draw()
+        # Compute for fitness
+        # fitness = self._fitness_fcn(imgs, target)
+        # genes = self._batch_get_genes()
         pass
 
     def _batch_draw(self, genes=None):
@@ -106,15 +111,24 @@ class Trainer:
             imgs = [a.draw() for a in self.artists]
         return imgs
 
-    def _batch_get_genes(self):
+    def _batch_get_genes(self, ravel=False):
         """Obtain the genes from all generated artists
+
+        Parameters
+        ----------
+        ravel : bool
+            Returns a gene of shape (population, 10*26)
+
 
         Returns
         -------
         np.ndarray
             Usually of shape (population, 10, 26)
         """
-        genes = [a.get_gene() for a in self.artists]
+        if ravel:
+            genes = [a.get_gene().ravel() for a in self.artists]
+        else:
+            genes = [a.get_gene() for a in self.artists]
         return np.stack(genes, axis=0)
 
     def _fitness_fcn(self, imgs, target):

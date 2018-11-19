@@ -368,3 +368,9 @@ class Artist:
             colors[k] = tuple(c)
         self.logger.debug('Colors are now generated:\n {}'.format(colors))
         return colors
+
+
+class Individual:
+    """Individual class for Genetic Algorithm implementation"""
+
+    pass

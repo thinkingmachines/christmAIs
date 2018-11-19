@@ -3,10 +3,13 @@
 """Trainer system for integration"""
 
 # Import standard library
+import operator
 import logging
 
 # Import modules
+from deap import tools
 import numpy as np
+from tqdm import trange
 
 from .drawsys import Artist
 from .embedder import get_fasttext_pretrained
@@ -51,6 +54,8 @@ class Trainer:
         self.seed = seed
         self.predictor_kwargs = predictor_kwargs
         self.embedding_kwargs = embedding_kwargs
+        # Auxiliary attributes
+        self._bar_fmt = '{l_bar}{bar}|{n_fmt}/{total_fmt}{postfix}'
         # Create secondary attributes
         self.reset()
 
@@ -76,23 +81,83 @@ class Trainer:
                 self.predictor.models.keys()
             )
         )
+        # Setting history
+        self.best_fitness_history = []
+        self.avg_fitness_history = []
 
-    def train(self, target, steps=100):
-        """Train and generate images
+    def train(self, target, mutpb=0.3, indpb=0.5, k=2, tournsize=4, steps=100):
+        """Train and generate images using a genetic algorithm
 
         Parameters
         ----------
         target : str
             The target ImageNet class label.
+        mutpb : float (default is 0.3)
+            Mutation probability
+        indpb : float (default is 0.5)
+            Independent probability for each attribute to be exchanged/shuffled
+            during uniform crossover and/or mutation.
+        k : int (default is 2)
+            Number of individuals to select during tournament selection
+        tournsize : int (default is 4)
+            Number of individuals participating in each tournament
         steps : int (default is 100)
             The number of steps to run the optimization algorithm
+
+        Returns
+        -------
+        christmais.trainer.Individual
+            The best child during the optimization run.
         """
-        # Generate initial population
-        # imgs = self._batch_draw()
+        # Get initial images
+        imgs = self._batch_draw()
         # Compute for fitness
-        # fitness = self._fitness_fcn(imgs, target)
-        # genes = self._batch_get_genes()
-        pass
+        fitness = self._fitness_fcn(imgs, target)
+        genes = self._batch_get_genes()
+        # Create initial population
+        init_population = [
+            Individual(img, gene, fitness, artist)
+            for img, gene, fitness, artist in zip(
+                imgs, genes, fitness, self.artists
+            )
+        ]
+        # Start optimization via genetic algorithm
+        population = init_population.copy()
+        # Create a tqdm progress bar
+        self._pbar = trange(steps, desc='GEN', bar_format=self._bar_fmt)
+        for gen in self._pbar:
+            next_pop = []
+            for idx in range(len(population)):
+                # Select parents using tournament selection
+                parents = tools.selTournament(
+                    population, k=2, tournsize=4, fit_attr='fitness'
+                )
+                best_parent = max(parents, key=operator.attrgetter('fitness'))
+                # Generate new child using uniform crossover
+                c_artist = best_parent.artist
+                c_gene = tools.cxUniform(
+                    parents[0].gene.copy(), parents[1].gene.copy(), indpb
+                )[0]
+                if np.random.uniform() < mutpb:
+                    c_gene = tools.mutShuffleIndexes(c_gene, indpb)
+                c_image = c_artist.draw_from_gene(c_gene)
+                c_fitness = self._fitness_fcn([c_image], target=target)[0]
+                child = Individual(c_image, c_gene, c_fitness, c_artist)
+                # Append child to next generation
+                next_pop.append(child)
+            # Set new population
+            population = next_pop
+            # Get fitness
+            best_fitness = max(
+                population, key=operator.attrgetter('fitness')
+            ).fitness
+            avg_fitness = np.mean([indiv.fitness for indiv in population])
+            self._pbar.set_postfix(best=best_fitness)
+            self.best_fitness_history.append(best_fitness)
+            self.avg_fitness_history.append(avg_fitness)
+        # Get best child and return it
+        best_child = max(population, key=operator.attrgetter('fitness'))
+        return best_child
 
     def _batch_draw(self, genes=None):
         """Draw images from artists
@@ -148,3 +213,21 @@ class Trainer:
         """
         fitness = [self.predictor.predict(img, target)[0] for img in imgs]
         return np.asarray(fitness)
+
+
+class Individual:
+    """Individual class for DEAP integration
+
+    Attributes
+    ----------
+    image : PIL.Image
+    gene : np.ndarray
+    fitness : float
+    artist : christmais.Artist
+    """
+
+    def __init__(self, image, gene, fitness, artist):
+        self.image = image
+        self.gene = gene
+        self.fitness = fitness
+        self.artist = artist

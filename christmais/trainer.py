@@ -109,6 +109,7 @@ class Trainer:
         christmais.trainer.Individual
             The best child during the optimization run.
         """
+        self.logger.info('Initializing population and histories...')
         # Get initial images
         imgs = self._batch_draw()
         # Compute for fitness
@@ -123,38 +124,40 @@ class Trainer:
         ]
         # Start optimization via genetic algorithm
         population = init_population.copy()
-        # Create a tqdm progress bar
-        self._pbar = trange(steps, desc='GEN', bar_format=self._bar_fmt)
-        for gen in self._pbar:
-            next_pop = []
-            for idx in range(len(population)):
-                # Select parents using tournament selection
-                parents = tools.selTournament(
-                    population, k=2, tournsize=4, fit_attr='fitness'
-                )
-                best_parent = max(parents, key=operator.attrgetter('fitness'))
-                # Generate new child using uniform crossover
-                c_artist = best_parent.artist
-                c_gene = tools.cxUniform(
-                    parents[0].gene.copy(), parents[1].gene.copy(), indpb
-                )[0]
-                if np.random.uniform() < mutpb:
-                    c_gene = tools.mutShuffleIndexes(c_gene, indpb)
-                c_image = c_artist.draw_from_gene(c_gene)
-                c_fitness = self._fitness_fcn([c_image], target=target)[0]
-                child = Individual(c_image, c_gene, c_fitness, c_artist)
-                # Append child to next generation
-                next_pop.append(child)
-            # Set new population
-            population = next_pop
-            # Get fitness
-            best_fitness = max(
-                population, key=operator.attrgetter('fitness')
-            ).fitness
-            avg_fitness = np.mean([indiv.fitness for indiv in population])
-            self._pbar.set_postfix(best=best_fitness)
-            self.best_fitness_history.append(best_fitness)
-            self.avg_fitness_history.append(avg_fitness)
+        self.logger.info('Optimization has started')
+        with trange(steps, desc='GEN', ncols=100, unit='gen') as t:
+            for gen in t:
+                next_pop = []
+                for idx in range(len(population)):
+                    # Select parents using tournament selection
+                    parents = tools.selTournament(
+                        population, k=2, tournsize=4, fit_attr='fitness'
+                    )
+                    best_parent = max(
+                        parents, key=operator.attrgetter('fitness')
+                    )
+                    # Generate new child using uniform crossover
+                    c_artist = best_parent.artist
+                    c_gene = tools.cxUniform(
+                        parents[0].gene.copy(), parents[1].gene.copy(), indpb
+                    )[0]
+                    if np.random.uniform() < mutpb:
+                        c_gene = tools.mutShuffleIndexes(c_gene, indpb)[0]
+                    c_image = c_artist.draw_from_gene(c_gene)
+                    c_fitness = self._fitness_fcn([c_image], target=target)[0]
+                    child = Individual(c_image, c_gene, c_fitness, c_artist)
+                    # Append child to next generation
+                    next_pop.append(child)
+                # Set new population
+                population = next_pop
+                # Get fitness
+                best_fitness = max(
+                    population, key=operator.attrgetter('fitness')
+                ).fitness
+                avg_fitness = np.mean([indiv.fitness for indiv in population])
+                t.set_postfix({'best': best_fitness, 'avg': avg_fitness})
+                self.best_fitness_history.append(best_fitness)
+                self.avg_fitness_history.append(avg_fitness)
         # Get best child and return it
         best_child = max(population, key=operator.attrgetter('fitness'))
         return best_child

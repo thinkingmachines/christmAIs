@@ -1,6 +1,6 @@
 matplotlib==2.1.0
-setuptools==40.0.0
 gensim
+deap
 requests==2.18.4
 numpy==1.14.2
 nltk==3.2.4

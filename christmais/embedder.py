@@ -49,7 +49,14 @@ def get_fasttext_pretrained(load=False, **kwargs):
 
 
 class FastTextWrapper(FastText):
-    """A wrapper for the FastText model from the GenSim library"""
+    """A wrapper for the FastText model from the GenSim library
+
+
+    Attributes
+    ----------
+    size : int
+    seed : int
+    """
 
     def __init__(
         self, sentences, size=8, window=5, min_count=5, seed=42, **kwargs

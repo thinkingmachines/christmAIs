@@ -45,6 +45,14 @@ class Artist:
     .. code-block:: python
 
         artist.draw()
+
+
+    Attributes
+    ----------
+    logger : logging.getLogger
+    emb : np.ndarray
+    dims : tuple
+    colors : dict
     """
 
     def __init__(self, embedding, dims=(224, 224)):
@@ -83,7 +91,8 @@ class Artist:
 
         Parameters
         ----------
-        density
+        density : int
+            Amount of circles and lines drawn
 
         Returns
         -------

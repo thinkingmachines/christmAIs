@@ -14,16 +14,8 @@ on perturbing the images until the classifier recognizes the target class
 (tree, shopping cart, etc.).
 
 ## Requirements
-- matplotlib==2.1.0
-- setuptools==40.0.0
-- gensim==3.5.0
-- requests==2.18.4
-- numpy==1.14.2
-- nltk==3.2.4
-- Pillow==5.3.0
-- scikit_learn==0.20.0
-- torch==0.4.1
-- torchvision==0.2.1
+
+Please see `requirements.txt` for all dependencies and `requirements-dev.txt` for dev dependencies.
 
 ## Set-up
 

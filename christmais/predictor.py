@@ -36,6 +36,13 @@ class Predictor:
         - finding the closest ImageNet class for a given abstract art or
         - assigning a prediction confidence of an abstract art to a target
           ImageNet class
+
+    Attributes
+    ----------
+    logger : logging.getLogger
+    seed : int
+    distribs : dict
+    models : dict
     """
 
     def __init__(

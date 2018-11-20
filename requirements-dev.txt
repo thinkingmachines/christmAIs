@@ -62,6 +62,10 @@ torch==0.4.1
 torchvision==0.2.1
 tornado==5.1.1
 tox==3.2.1
+flake8==3.5.0
+Sphinx==1.7.6
+coverage==4.5.1
+nbstripout
 tqdm==4.28.1
 traitlets==4.3.2
 urllib3==1.22

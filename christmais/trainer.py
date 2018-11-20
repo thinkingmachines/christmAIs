@@ -25,7 +25,7 @@ class Trainer:
     def __init__(
         self,
         X,
-        colors=None,
+        colorscheme=None,
         population=30,
         dims=(224, 224),
         seed=42,
@@ -38,7 +38,7 @@ class Trainer:
         ----------
         X : str
             Input sentence to transform into
-        colors : dict (default is None)
+        colorscheme : dict (default is None)
             Useful for setting the color scheme before hand.
             Dictionary with keys 'background', 'layer1', 'layer2', 'layer3',
             and 'lines'
@@ -63,19 +63,10 @@ class Trainer:
         # Auxiliary attributes
         self._bar_fmt = '{l_bar}{bar}|{n_fmt}/{total_fmt}{postfix}'
         # Create secondary attributes
-        self.reset(colors=colors)
+        self.reset()
 
-    def reset(self, colors=None):
-        """Generate a new set of artists, predictor, and model
-
-        Parameters
-        ----------
-        colors : dict (default is None)
-            Useful for setting the color scheme before hand.
-            Dictionary with keys 'background', 'layer1', 'layer2', 'layer3',
-            and 'lines'
-
-        """
+    def reset(self):
+        """Generate a new set of artists, predictor, and model"""
         # Build a FastText model
         self.model = get_fasttext_pretrained(
             load=True, **self.embedding_kwargs
@@ -88,10 +79,6 @@ class Trainer:
         self.artists = [
             Artist(self.emb, self.dims) for i in range(self.population)
         ]
-        if colors is not None:
-            self.logger.info('Setting colorscheme to artists')
-            for a in self.artists:
-                a.colors = colors
         self.logger.info('Created {} artists'.format(len(self.artists)))
         # Create a predictor
         self.predictor = Predictor(seed=self.seed, **self.predictor_kwargs)
@@ -103,6 +90,23 @@ class Trainer:
         # Setting history
         self.best_fitness_history = []
         self.avg_fitness_history = []
+
+    def set_colors(self, colorscheme):
+        """Set the artist colorscheme
+
+        It is preferable to call this before training, so that the color
+        dictionary is updated right away.
+
+        Parameters
+        ----------
+        colorscheme : dict (default is None)
+            Useful for setting the color scheme before hand.
+            Dictionary with keys 'background', 'layer1', 'layer2', 'layer3',
+            and 'lines'
+        """
+        self.logger.info('Setting colorscheme for artists')
+        for artist in self.artists:
+            artist.colors = colorscheme
 
     def train(
         self,

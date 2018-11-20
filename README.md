@@ -144,6 +144,5 @@ generations is returned.
 
 ```python
 # after training
-best_individual = t.train(target=target, steps=100)
 best_individual.artist.draw()
 ```

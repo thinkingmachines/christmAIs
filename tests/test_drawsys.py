@@ -65,7 +65,7 @@ def test_gene_shape(embedding):
     artist = Artist(embedding)
     artist.draw(density=10)
     gene = artist.get_gene()
-    assert gene.shape == (10, 26)
+    assert gene.shape == (10, 28)
 
 
 def test_gene_return_values(embedding):

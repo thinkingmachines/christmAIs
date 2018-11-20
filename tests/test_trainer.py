@@ -6,6 +6,7 @@ import pytest
 import numpy as np
 
 from christmais.trainer import Trainer
+from christmais.trainer import Individual
 
 
 def test_fitness_function_return_type():
@@ -41,3 +42,27 @@ def test_batch_get_genes_return_shape():
     t._batch_draw()
     genes = t._batch_get_genes()
     assert genes.shape == expected_shape
+
+
+def test_train_return_type():
+    """Test if the train() method returns the expected type"""
+    population = 5
+    steps = 2
+    t = Trainer('Thinking Machines Data Science', population=population)
+    child = t.train(target='iron', steps=steps)
+    assert isinstance(child, Individual)
+
+
+def test_set_colorscheme():
+    """Test if the set_colorscheme methods updates the artists"""
+    color_scheme = {
+        'background': (255, 255, 255, 255),
+        'layer1': (255, 0, 0, 255),
+        'layer2': (0, 255, 0, 255),
+        'layer3': (0, 0, 255, 255),
+        'lines': (0, 0, 0, 255),
+    }
+    population = 5
+    t = Trainer('Thinking Machines Data Science', population=population)
+    t.set_colors(colorscheme=color_scheme)
+    assert t.artists[0].colors == color_scheme

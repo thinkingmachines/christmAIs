@@ -3,6 +3,7 @@
 """Trainer system for integration"""
 
 # Import standard library
+import os
 import operator
 import logging
 
@@ -85,7 +86,16 @@ class Trainer:
         self.best_fitness_history = []
         self.avg_fitness_history = []
 
-    def train(self, target, mutpb=0.3, indpb=0.5, k=2, tournsize=4, steps=100):
+    def train(
+        self,
+        target,
+        mutpb=0.3,
+        indpb=0.5,
+        k=2,
+        tournsize=4,
+        steps=100,
+        outdir=None,
+    ):
         """Train and generate images using a genetic algorithm
 
         Parameters
@@ -103,6 +113,9 @@ class Trainer:
             Number of individuals participating in each tournament
         steps : int (default is 100)
             The number of steps to run the optimization algorithm
+        outdir : str (default is None)
+            Output directory to where the images for each generation will be
+            saved
 
         Returns
         -------
@@ -112,9 +125,11 @@ class Trainer:
         self.logger.info('Initializing population and histories...')
         # Get initial images
         imgs = self._batch_draw()
+
         # Compute for fitness
         fitness = self._fitness_fcn(imgs, target)
         genes = self._batch_get_genes()
+
         # Create initial population
         init_population = [
             Individual(img, gene, fitness, artist)
@@ -122,12 +137,27 @@ class Trainer:
                 imgs, genes, fitness, self.artists
             )
         ]
+
+        # Save to filesystem
+        if outdir is not None:
+            dir_ = outdir + '/gen00/'
+            for idx, indiv in enumerate(init_population):
+                if not os.path.exists(dir):
+                    os.makedirs(dir_)
+                indiv.image.save(dir_ + '{}_{}.png'.format(idx, indiv.fitness))
+
         # Start optimization via genetic algorithm
         population = init_population.copy()
         self.logger.info('Optimization has started')
         with trange(steps, desc='GEN', ncols=100, unit='gen') as t:
             for gen in t:
-                next_pop = []
+
+                # Filesystem IO
+                if outdir is not None:
+                    dir_ = outdir + '/gen{}/'.format(str(gen).zfill(2))
+
+                next_pop = []  # Next population
+
                 for idx in range(len(population)):
                     # Select parents using tournament selection
                     parents = tools.selTournament(
@@ -136,6 +166,7 @@ class Trainer:
                     best_parent = max(
                         parents, key=operator.attrgetter('fitness')
                     )
+
                     # Generate new child using uniform crossover
                     c_artist = best_parent.artist
                     c_gene = tools.cxUniform(
@@ -146,18 +177,32 @@ class Trainer:
                     c_image = c_artist.draw_from_gene(c_gene)
                     c_fitness = self._fitness_fcn([c_image], target=target)[0]
                     child = Individual(c_image, c_gene, c_fitness, c_artist)
+
                     # Append child to next generation
                     next_pop.append(child)
+
+                    # Filesystem IO
+                    if outdir is not None:
+                        if not os.path.exists(dir_):
+                            os.makedirs(dir_)
+                        child.image.save(
+                            dir_ + '{}_{}.png'.format(idx, child.fitness)
+                        )
+
                 # Set new population
                 population = next_pop
+
                 # Get fitness
                 best_fitness = max(
                     population, key=operator.attrgetter('fitness')
                 ).fitness
                 avg_fitness = np.mean([indiv.fitness for indiv in population])
                 t.set_postfix({'best': best_fitness, 'avg': avg_fitness})
+
+                # Save to history
                 self.best_fitness_history.append(best_fitness)
                 self.avg_fitness_history.append(avg_fitness)
+
         # Get best child and return it
         best_child = max(population, key=operator.attrgetter('fitness'))
         return best_child

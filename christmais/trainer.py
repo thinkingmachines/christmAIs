@@ -25,6 +25,7 @@ class Trainer:
     def __init__(
         self,
         X,
+        colorscheme=None,
         population=30,
         dims=(224, 224),
         seed=42,
@@ -37,6 +38,10 @@ class Trainer:
         ----------
         X : str
             Input sentence to transform into
+        colorscheme : dict (default is None)
+            Useful for setting the color scheme before hand.
+            Dictionary with keys 'background', 'layer1', 'layer2', 'layer3',
+            and 'lines'
         population : int (default is 30)
             Number of artists created
         dims : tuple of size 2
@@ -85,6 +90,27 @@ class Trainer:
         # Setting history
         self.best_fitness_history = []
         self.avg_fitness_history = []
+
+    def set_colors(self, colorscheme):
+        """Set the artist colorscheme
+
+        It is preferable to call this before training, so that the color
+        dictionary is updated right away.
+
+        Parameters
+        ----------
+        colorscheme : dict (default is None)
+            Useful for setting the color scheme before hand.
+            Dictionary with keys 'background', 'layer1', 'layer2', 'layer3',
+            and 'lines'
+        """
+        self.logger.info('Setting colorscheme for artists')
+        for k, v in colorscheme.items():
+            assert (
+                len(v) == 4
+            ), 'Color values should be a tuple of size 4 (RGBA)'
+        for artist in self.artists:
+            artist.colors = colorscheme
 
     def train(
         self,

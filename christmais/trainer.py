@@ -142,7 +142,7 @@ class Trainer:
         if outdir is not None:
             dir_ = outdir + '/gen00/'
             for idx, indiv in enumerate(init_population):
-                if not os.path.exists(dir):
+                if not os.path.exists(dir_):
                     os.makedirs(dir_)
                 indiv.image.save(dir_ + '{}_{}.png'.format(idx, indiv.fitness))
 

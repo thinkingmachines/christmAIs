@@ -145,7 +145,9 @@ class Trainer:
             for idx, indiv in enumerate(init_population):
                 if not os.path.exists(dir_):
                     os.makedirs(dir_)
-                indiv.image.save(dir_ + '{}_{}.png'.format(idx, indiv.fitness))
+                indiv.image.save(
+                    dir_ + '{}_{}.png'.format(str(idx).zfill(2), indiv.fitness)
+                )
 
         # Start optimization via genetic algorithm
         population = init_population.copy()
@@ -155,7 +157,7 @@ class Trainer:
 
                 # Filesystem IO
                 if outdir is not None:
-                    dir_ = outdir + '/gen{}/'.format(str(gen).zfill(2))
+                    dir_ = outdir + '/gen{}/'.format(str(gen + 1).zfill(2))
 
                 next_pop = []  # Next population
 
@@ -187,7 +189,10 @@ class Trainer:
                         if not os.path.exists(dir_):
                             os.makedirs(dir_)
                         child.image.save(
-                            dir_ + '{}_{}.png'.format(idx, child.fitness)
+                            dir_
+                            + '{}_{}.png'.format(
+                                str(idx).zfill(2), child.fitness
+                            )
                         )
 
                 # Set new population

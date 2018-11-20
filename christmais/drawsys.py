@@ -72,6 +72,8 @@ class Artist:
         # Initialize coordinates
         self._circle_coords = dict.fromkeys(['layer1', 'layer2', 'layer3'])
         self._circle_w = dict.fromkeys(['layer1', 'layer2', 'layer3'])
+        self._arc_start = []
+        self._arc_end = []
         self._line_coords = []
         self._line_w = []
 
@@ -135,6 +137,8 @@ class Artist:
         # fmt: on
         line_coords = gene[:, 21:25]
         line_w = gene[:, 25]
+        arc_start = gene[:, 26]
+        arc_end = gene[:, 27]
         density = gene.shape[0]
         # Populate circle layers
         for idx, (layer, _) in enumerate(circle_coords.items()):
@@ -155,10 +159,13 @@ class Artist:
         ## draw lines
         for i in np.arange(density):
             x1, y1, x2, y2 = line_coords[i]
+            start = arc_start[i]
+            end = arc_end[i]
             w = line_w[i]
             width = 2 * w + 2
             draw.line((x1, y1, x2, y2), fill=self.colors['lines'], width=width)
             # fmt: off
+            draw.arc((x1, y1, x2, y2), start=start, end=end, fill=color['lines'], width=width)
             draw.ellipse((x1 - w, y1 - w, x1 + w, y1 + w), fill=self.colors['lines'])
             draw.ellipse((x2 - w, y2 - w, x2 + w, y2 + w), fill=self.colors['lines'])
             # fmt: on
@@ -196,6 +203,8 @@ class Artist:
             * self._circle_w['layer3'] = 1
             * self._line_coords = 4
             * self._line_w = 1
+            * self._arc_start = 1
+            * self._arc_end = 1
 
         Returns
         -------
@@ -212,6 +221,8 @@ class Artist:
                 self._circle_w['layer3'],
                 self._line_coords,
                 self._line_w,
+                self._arc_start,
+                self._arc_end,
             )
         )
         if gene.all() is None:
@@ -289,6 +300,8 @@ class Artist:
         # Initialize memory to be filled later
         w_memory = np.empty([density, 1], dtype=int)
         coords_memory = np.empty([density, 4], dtype=int)
+        start_memory = np.empty([density, 1], dtype=int)
+        end_memory = np.empty([density, 1], dtype=int)
         for i, c in enumerate(cands):
             w = self._interpolate(c[0], target=(min_width, max_width))
             width = 2 * w + 2
@@ -296,14 +309,21 @@ class Artist:
             coords_ = np.random.choice(c, size=4)
             coords = self._interpolate(coords_, target=(w, self.dims[0] - w))
             x1, y1, x2, y2 = coords
-            # Put chosen coords and w in memory
+            # Randomly generate arc starts and ends
+            start, end = np.random.choice(range(0, 360), size=2)
+            # Put chosen params in memory
+            start_memory[i] = start
+            end_memory[i] = end
             coords_memory[i] = coords
             w_memory[i] = w
             # Draw line with round line caps (circles at the end)
+            draw.arc((x1, y1, x2, y2), start=start, end=end, fill=color, width=width)
             draw.line((x1, y1, x2, y2), fill=color, width=width)
             draw.ellipse((x1 - w, y1 - w, x1 + w, y1 + w), fill=color)
             draw.ellipse((x2 - w, y2 - w, x2 + w, y2 + w), fill=color)
         # Store coords and w as attributes
+        self._arc_start = start_memory
+        self._arc_end = end_memory
         self._line_coords = coords_memory
         self._line_w = w_memory
         return (im, draw)

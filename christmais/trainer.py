@@ -105,6 +105,10 @@ class Trainer:
             and 'lines'
         """
         self.logger.info('Setting colorscheme for artists')
+        for k, v in colorscheme:
+            assert (
+                len(v) == 4
+            ), 'Color values should be a tuple of size 4 (RGBA)'
         for artist in self.artists:
             artist.colors = colorscheme
 

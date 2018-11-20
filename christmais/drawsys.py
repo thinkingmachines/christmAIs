@@ -45,6 +45,14 @@ class Artist:
     .. code-block:: python
 
         artist.draw()
+
+
+    Attributes
+    ----------
+    logger : logging.getLogger
+    emb : np.ndarray
+    dims : tuple
+    colors : dict
     """
 
     def __init__(self, embedding, dims=(224, 224)):
@@ -62,8 +70,8 @@ class Artist:
         self.dims = dims
         self.colors = self._generate_colors(self.emb)
         # Initialize coordinates
-        self._circle_coords = dict.fromkeys(["layer1", "layer2", "layer3"])
-        self._circle_w = dict.fromkeys(["layer1", "layer2", "layer3"])
+        self._circle_coords = dict.fromkeys(['layer1', 'layer2', 'layer3'])
+        self._circle_w = dict.fromkeys(['layer1', 'layer2', 'layer3'])
         self._line_coords = []
         self._line_w = []
 
@@ -83,7 +91,8 @@ class Artist:
 
         Parameters
         ----------
-        density
+        density : int
+            Amount of circles and lines drawn
 
         Returns
         -------
@@ -91,17 +100,17 @@ class Artist:
             The resulting image
         """
         # Draw background
-        im = Image.new("RGB", self.dims, self.colors["background"])
-        draw = ImageDraw.Draw(im, "RGBA")
+        im = Image.new('RGB', self.dims, self.colors['background'])
+        draw = ImageDraw.Draw(im, 'RGBA')
         # Draw circles
         circle_layers = {
-            k: self.colors[k] for k in ("layer1", "layer2", "layer3")
+            k: self.colors[k] for k in ('layer1', 'layer2', 'layer3')
         }
         im, draw = self._draw_circles(
             im=im, draw=draw, layers=circle_layers, density=density
         )
         im, draw = self._draw_lines(
-            im=im, draw=draw, color=self.colors["lines"], density=density
+            im=im, draw=draw, color=self.colors['lines'], density=density
         )
         return im
 
@@ -120,9 +129,9 @@ class Artist:
         """
         # Initialize variables to contain genes
         # fmt: off
-        circle_coords = dict.fromkeys(["layer1", "layer2", "layer3"])
-        circle_w = dict.fromkeys(["layer1", "layer2", "layer3"])
-        circle_colors = {k: self.colors[k] for k in ("layer1", "layer2", "layer3")}
+        circle_coords = dict.fromkeys(['layer1', 'layer2', 'layer3'])
+        circle_w = dict.fromkeys(['layer1', 'layer2', 'layer3'])
+        circle_colors = {k: self.colors[k] for k in ('layer1', 'layer2', 'layer3')}
         # fmt: on
         line_coords = gene[:, 21:25]
         line_w = gene[:, 25]
@@ -132,8 +141,8 @@ class Artist:
             circle_coords[layer] = gene[:, 6 * idx : 6 * (idx + 1)]
             circle_w[layer] = gene[:, 18 + idx]
         # Draw background
-        im = Image.new("RGB", self.dims, self.colors["background"])
-        draw = ImageDraw.Draw(im, "RGBA")
+        im = Image.new('RGB', self.dims, self.colors['background'])
+        draw = ImageDraw.Draw(im, 'RGBA')
         # Draw
         for i, (layer, color) in enumerate(circle_colors.items()):
             for j in np.arange(density):
@@ -148,10 +157,10 @@ class Artist:
             x1, y1, x2, y2 = line_coords[i]
             w = line_w[i]
             width = 2 * w + 2
-            draw.line((x1, y1, x2, y2), fill=self.colors["lines"], width=width)
+            draw.line((x1, y1, x2, y2), fill=self.colors['lines'], width=width)
             # fmt: off
-            draw.ellipse((x1 - w, y1 - w, x1 + w, y1 + w), fill=self.colors["lines"])
-            draw.ellipse((x2 - w, y2 - w, x2 + w, y2 + w), fill=self.colors["lines"])
+            draw.ellipse((x1 - w, y1 - w, x1 + w, y1 + w), fill=self.colors['lines'])
+            draw.ellipse((x2 - w, y2 - w, x2 + w, y2 + w), fill=self.colors['lines'])
             # fmt: on
         return im
 
@@ -179,12 +188,12 @@ class Artist:
 
         Lastly, the genes are arranged in the following manner (column-wise):
 
-            * self._circle_coords["layer1"] = 6
-            * self._circle_coords["layer2"] = 6
-            * self._circle_coords["layer3"] = 6
-            * self._circle_w["layer1"] = 1
-            * self._circle_w["layer2"] = 1
-            * self._circle_w["layer3"] = 1
+            * self._circle_coords['layer1'] = 6
+            * self._circle_coords['layer2'] = 6
+            * self._circle_coords['layer3'] = 6
+            * self._circle_w['layer1'] = 1
+            * self._circle_w['layer2'] = 1
+            * self._circle_w['layer3'] = 1
             * self._line_coords = 4
             * self._line_w = 1
 
@@ -195,18 +204,18 @@ class Artist:
         """
         gene = np.hstack(
             (
-                self._circle_coords["layer1"],
-                self._circle_coords["layer2"],
-                self._circle_coords["layer3"],
-                self._circle_w["layer1"],
-                self._circle_w["layer2"],
-                self._circle_w["layer3"],
+                self._circle_coords['layer1'],
+                self._circle_coords['layer2'],
+                self._circle_coords['layer3'],
+                self._circle_w['layer1'],
+                self._circle_w['layer2'],
+                self._circle_w['layer3'],
                 self._line_coords,
                 self._line_w,
             )
         )
         if gene.all() is None:
-            msg = "Returning None, make sure to call draw() before get_gene()"
+            msg = 'Returning None, make sure to call draw() before get_gene()'
             self.logger.warn(msg)
         return gene
 
@@ -219,7 +228,7 @@ class Artist:
             Generated image
         draw : PIL.ImageDraw
             Drawable PIL object
-        layers : dict with keys ["layer1", "layer2", "layer3"]
+        layers : dict with keys ['layer1', 'layer2', 'layer3']
             Define the colors for each circle layers
         density : int (default is 10)
             Number of circles per layer
@@ -359,12 +368,18 @@ class Artist:
         dict
             Color dictionary for drawing
         """
-        layers = ["background", "layer1", "layer2", "layer3", "lines"]
+        layers = ['background', 'layer1', 'layer2', 'layer3', 'lines']
         colors = dict.fromkeys(layers)
         for k, v in colors.items():
             # Choose three random elements from seed then
             # interpolate to range (0,255)
             c = self._interpolate(np.random.choice(x, size=4))
             colors[k] = tuple(c)
-        self.logger.debug("Colors are now generated:\n {}".format(colors))
+        self.logger.debug('Colors are now generated:\n {}'.format(colors))
         return colors
+
+
+class Individual:
+    """Individual class for Genetic Algorithm implementation"""
+
+    pass

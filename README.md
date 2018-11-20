@@ -14,16 +14,8 @@ on perturbing the images until the classifier recognizes the target class
 (tree, shopping cart, etc.).
 
 ## Requirements
-- matplotlib==2.1.0
-- setuptools==40.0.0
-- gensim==3.5.0
-- requests==2.18.4
-- numpy==1.14.2
-- nltk==3.2.4
-- Pillow==5.3.0
-- scikit_learn==0.20.0
-- torch==0.4.1
-- torchvision==0.2.1
+
+Please see `requirements.txt` for all dependencies and `requirements-dev.txt` for dev dependencies.
 
 ## Set-up
 
@@ -78,7 +70,7 @@ from christmais import get_fasttext_pretrained
 # Assuming that /tmp/brown_fasttext.model exists
 model = get_fasttext_pretrained(load=True)
 # Embed a text
-my_text = "Thinking Machines Data Science"
+my_text = 'Thinking Machines Data Science'
 model.transform(my_text)
 ```
 
@@ -91,7 +83,7 @@ drawing system, a.k.a. the `Artist` class:
 from christmais import (get_fasttext_pretrained, Artist)
 
 model = get_fasttext_pretrained(load=True)
-seed = model.transform("Thinking Machines Data Science")
+seed = model.transform('Thinking Machines Data Science')
 artist = Artist(seed, dims=(224, 224)) 
 artist.draw()
 ```
@@ -111,7 +103,7 @@ from christmais import Predictor
 
 # Map text to seed
 model = get_fasttext_pretrained(load=True)
-seed = model.transform("Thinking Machines Data Science")
+seed = model.transform('Thinking Machines Data Science')
 
 # Map seed to image
 artist = Artist(seed, dims=(224, 224)) 
@@ -131,3 +123,26 @@ don't expect that the score is high at the very start!
 0.0003216064
 ```
 
+### The Trainer class
+
+The three components above are integrated inside a `Trainer` class that enables
+you to "grow" your images to look like ImageNet classes. In order to use this,
+simply create an instance of `Trainer` by feeding it the input string, then
+call the `train()` method with your own parameters:
+
+```python
+from christmais import Trainer
+
+target = 'iron' # We want our abstract art to look like an iron
+t = Trainer('Thinking Machines Data Science')
+best_individual = t.train(target=target, steps=100)
+```
+
+The whole optimization scheme involves a genetic algorithm that improves the
+population over time. At the end of training, the best individual after `N`
+generations is returned.
+
+```python
+# after training
+best_individual.artist.draw()
+```

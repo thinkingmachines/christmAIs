@@ -34,11 +34,11 @@ def get_fasttext_pretrained(load=False, **kwargs):
     """
     logger = logging.getLogger(__name__)
     if load:
-        fname = get_tmpfile("brown_fasttext.model")
+        fname = get_tmpfile('brown_fasttext.model')
         try:
             model = FastTextWrapper.load(fname)
         except FileNotFoundError:
-            msg = "{} not found, will train FastText with brown corpus..."
+            msg = '{} not found, will train FastText with brown corpus...'
             logger.warn(msg.format(fname))
             model = FastTextWrapper(sentences=brown.sents(), **kwargs)
             model.save(fname)
@@ -49,7 +49,14 @@ def get_fasttext_pretrained(load=False, **kwargs):
 
 
 class FastTextWrapper(FastText):
-    """A wrapper for the FastText model from the GenSim library"""
+    """A wrapper for the FastText model from the GenSim library
+
+
+    Attributes
+    ----------
+    size : int
+    seed : int
+    """
 
     def __init__(
         self, sentences, size=8, window=5, min_count=5, seed=42, **kwargs

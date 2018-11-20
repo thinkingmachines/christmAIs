@@ -165,7 +165,7 @@ class Artist:
             width = 2 * w + 2
             draw.line((x1, y1, x2, y2), fill=self.colors['lines'], width=width)
             # fmt: off
-            draw.arc((x1, y1, x2, y2), start=start, end=end, fill=color['lines'], width=width)
+            draw.arc((x1, y1, x2, y2), start=start, end=end, fill=self.colors['lines'], width=width)
             draw.ellipse((x1 - w, y1 - w, x1 + w, y1 + w), fill=self.colors['lines'])
             draw.ellipse((x2 - w, y2 - w, x2 + w, y2 + w), fill=self.colors['lines'])
             # fmt: on

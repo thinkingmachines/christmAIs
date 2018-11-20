@@ -140,6 +140,7 @@ class Trainer:
 
         # Save to filesystem
         if outdir is not None:
+            self.logger.info('Writing image files at {}'.format(outdir))
             dir_ = outdir + '/gen00/'
             for idx, indiv in enumerate(init_population):
                 if not os.path.exists(dir_):

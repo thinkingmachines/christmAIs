@@ -25,4 +25,5 @@ six==1.11.0
 smart-open==1.7.1
 torch==0.4.1
 torchvision==0.2.1
+tqdm==4.28.1
 urllib3==1.22

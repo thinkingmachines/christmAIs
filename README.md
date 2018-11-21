@@ -24,6 +24,7 @@ First, clone this repository to your local machine:
 ```shell
 $ git clone https://github.com/thinkingmachines/christmAIs.git
 ```
+You'll be prompted for your username and password. If you have 2FA enabled as you should, you need to [use a private token](https://github.com/settings/tokens) instead of your password.
 
 It is highly-recommended to use a virtual environment to set this project up
 and install the dependencies:

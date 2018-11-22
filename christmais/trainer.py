@@ -11,6 +11,11 @@ import logging
 from deap import tools
 import numpy as np
 from tqdm import trange
+from tqdm import tqdm
+import random
+import copy
+
+import gc
 
 from .drawsys import Artist
 from .embedder import get_fasttext_pretrained
@@ -26,7 +31,7 @@ class Trainer:
         self,
         X,
         colorscheme=None,
-        population=30,
+        population=100,
         dims=(224, 224),
         seed=42,
         predictor_kwargs={},
@@ -111,14 +116,16 @@ class Trainer:
             ), 'Color values should be a tuple of size 4 (RGBA)'
         for artist in self.artists:
             artist.colors = colorscheme
+            artist.dims = (500, 500)
 
     def train(
         self,
         target,
-        mutpb=0.3,
+        mutpb=0.05,
         indpb=0.5,
         k=2,
         tournsize=4,
+        popsize=30,
         steps=100,
         outdir=None,
     ):
@@ -147,18 +154,37 @@ class Trainer:
         -------
         christmais.trainer.Individual
             The best child during the optimization run.
-        """
+        """        
+        def mut_delete(gene, mutpb):
+            for element in gene:
+                if np.random.uniform() < mutpb:
+                    gene = np.delete(gene, element, 0)
+            return gene
+        
         self.logger.info('Initializing population and histories...')
+        
         # Get initial images
         imgs = self._batch_draw()
-
-        # Compute for fitness
-        fitness = self._fitness_fcn(imgs, target)
+        
+        # Get all gene elements
         genes = self._batch_get_genes()
+        all_genes = []
+        for gene in genes:
+            for i in range(len(gene)):
+                all_genes.append(gene[i, :])
+        
+        # Compute fitness for each individual
+        fitness = []
+        imgs = []
+        for gene in tqdm(genes):
+            c_image = self.artists[0].draw_from_gene(gene[:1, :])
+            c_fitness = self._fitness_fcn([c_image], target=target)[0]
+            fitness.append(c_fitness)
+            imgs.append(c_image)
 
         # Create initial population
         init_population = [
-            Individual(img, gene, fitness, artist)
+            Individual(img, gene[:1, :], fitness, artist)
             for img, gene, fitness, artist in zip(
                 imgs, genes, fitness, self.artists
             )
@@ -174,50 +200,53 @@ class Trainer:
                 indiv.image.save(
                     dir_ + '{}_{}.png'.format(str(idx).zfill(2), indiv.fitness)
                 )
-
+        
         # Start optimization via genetic algorithm
         population = init_population.copy()
         self.logger.info('Optimization has started')
         with trange(steps, desc='GEN', ncols=100, unit='gen') as t:
             for gen in t:
-
                 # Filesystem IO
                 if outdir is not None:
                     dir_ = outdir + '/gen{}/'.format(str(gen + 1).zfill(2))
 
                 next_pop = []  # Next population
 
-                for idx in range(len(population)):
-                    # Select parents using tournament selection
-                    parents = tools.selTournament(
-                        population, k=2, tournsize=4, fit_attr='fitness'
+                #for idx in range(len(population)):
+                for idx in range(popsize):
+                    individuals = tools.selTournament(
+                        population, k=k, tournsize=tournsize, fit_attr='fitness'
                     )
-                    best_parent = max(
-                        parents, key=operator.attrgetter('fitness')
+                    
+                    tournament = []
+                    for individual in individuals:
+                        random_gene = random.choice(all_genes)
+                        artist = individual.artist
+                        gene = np.vstack((individual.gene, random_gene)) 
+                        image = individual.artist.draw_from_gene(individual.gene)
+                        fitness = self._fitness_fcn([image], target=target)[0]
+                        tournament.append(Individual(image, gene, fitness, artist))
+                    
+                    best = max(
+                        tournament, key=operator.attrgetter('fitness')
                     )
-
-                    # Generate new child using uniform crossover
-                    c_artist = best_parent.artist
-                    c_gene = tools.cxUniform(
-                        parents[0].gene.copy(), parents[1].gene.copy(), indpb
-                    )[0]
-                    if np.random.uniform() < mutpb:
-                        c_gene = tools.mutShuffleIndexes(c_gene, indpb)[0]
-                    c_image = c_artist.draw_from_gene(c_gene)
-                    c_fitness = self._fitness_fcn([c_image], target=target)[0]
-                    child = Individual(c_image, c_gene, c_fitness, c_artist)
+                       
+                    # Randomly remove elementes
+                    best.gene = mut_delete(best.gene, mutpb=mutpb)
+                    best.image = best.artist.draw_from_gene(best.gene)
+                    best.fitness = self._fitness_fcn([best.image], target=target)[0]
 
                     # Append child to next generation
-                    next_pop.append(child)
+                    next_pop.append(best)
 
                     # Filesystem IO
                     if outdir is not None:
                         if not os.path.exists(dir_):
                             os.makedirs(dir_)
-                        child.image.save(
+                        best.image.save(
                             dir_
                             + '{}_{}.png'.format(
-                                str(idx).zfill(2), child.fitness
+                                str(idx).zfill(2), best.fitness
                             )
                         )
 
@@ -234,6 +263,8 @@ class Trainer:
                 # Save to history
                 self.best_fitness_history.append(best_fitness)
                 self.avg_fitness_history.append(avg_fitness)
+                
+                gc.collect()
 
         # Get best child and return it
         best_child = max(population, key=operator.attrgetter('fitness'))

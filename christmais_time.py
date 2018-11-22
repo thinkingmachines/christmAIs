@@ -26,7 +26,15 @@ def build_parser():
         type=str,
         required=True,
     )
-
+    parser.add_argument(
+        '-c',
+        '--colorscheme',
+        dest='colorscheme',
+        help='JSON filepath for set colorscheme',
+        type=str,
+        default=None,
+        required=False,
+    )
     parser.add_argument(
         '-o',
         '--output-dir',
@@ -107,3 +115,35 @@ def build_parser():
         required=False,
     )
     return parser
+
+
+def main():
+    parser = build_parser()
+    options = parser.parse_args()
+    # Create a Trainer
+    t = Trainer(
+        X=options.input_str,
+        population=options.population,
+        dims=options.dimensions,
+    )
+    # Set colorscheme and dimensions
+    if options.colorscheme is not None:
+        t.set_colors(colorscheme=options.colorscheme)
+    t.set_dims(options.dimensions)
+    # Perform optimization
+    best = t.train(
+        target=options.target,
+        mutpb=options.mutpb,
+        indpb=options.indpb,
+        tournsize=options.tournsize,
+        steps=options.steps,
+        outdir=options.train_output_dir,
+    )
+    # Save best image
+    best_gene = best.gene
+    best_img = best.artist.draw_from_gene(best_gene)
+    best_img.save(options.output_dir)
+
+
+if __name__ == "__main__":
+    main()

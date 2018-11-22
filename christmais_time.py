@@ -67,7 +67,7 @@ def build_parser():
         dest='target',
         help='Target ImageNet class',
         type=str,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         '-p',

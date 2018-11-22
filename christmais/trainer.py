@@ -3,19 +3,19 @@
 """Trainer system for integration"""
 
 # Import standard library
-import os
-import operator
+import copy
+import gc
 import logging
+import operator
+import os
+import random
 
 # Import modules
-from deap import tools
 import numpy as np
 from tqdm import trange
-from tqdm import tqdm
-import random
-import copy
 
-import gc
+# Import from package
+from deap import tools
 
 from .drawsys import Artist
 from .embedder import get_fasttext_pretrained
@@ -116,7 +116,20 @@ class Trainer:
             ), 'Color values should be a tuple of size 4 (RGBA)'
         for artist in self.artists:
             artist.colors = colorscheme
-            artist.dims = (500, 500)
+
+    def set_dims(self, dims=(500, 500)):
+        """Set the artist canvas dimensions
+
+        It is preferable to call this before training, so that the dimensions
+        are updated right away.
+
+        Parameters
+        ---------
+        dims : tuple (default is (500, 500))
+        """
+        self.logger.info('Setting artist dimensions to {}'.format(dims))
+        for artist in self.artists:
+            artist.dims = dims
 
     def train(
         self,
@@ -125,7 +138,6 @@ class Trainer:
         indpb=0.5,
         k=2,
         tournsize=4,
-        popsize=30,
         steps=100,
         outdir=None,
     ):
@@ -154,29 +166,24 @@ class Trainer:
         -------
         christmais.trainer.Individual
             The best child during the optimization run.
-        """        
-        def mut_delete(gene, mutpb):
-            for element in gene:
-                if np.random.uniform() < mutpb:
-                    gene = np.delete(gene, element, 0)
-            return gene
-        
+        """
+
         self.logger.info('Initializing population and histories...')
-        
+
         # Get initial images
         imgs = self._batch_draw()
-        
+
         # Get all gene elements
         genes = self._batch_get_genes()
         all_genes = []
         for gene in genes:
             for i in range(len(gene)):
                 all_genes.append(gene[i, :])
-        
+
         # Compute fitness for each individual
         fitness = []
         imgs = []
-        for gene in tqdm(genes):
+        for gene in genes:
             c_image = self.artists[0].draw_from_gene(gene[:1, :])
             c_fitness = self._fitness_fcn([c_image], target=target)[0]
             fitness.append(c_fitness)
@@ -200,7 +207,7 @@ class Trainer:
                 indiv.image.save(
                     dir_ + '{}_{}.png'.format(str(idx).zfill(2), indiv.fitness)
                 )
-        
+
         # Start optimization via genetic algorithm
         population = init_population.copy()
         self.logger.info('Optimization has started')
@@ -212,29 +219,35 @@ class Trainer:
 
                 next_pop = []  # Next population
 
-                #for idx in range(len(population)):
-                for idx in range(popsize):
+                for idx in range(self.population):
                     individuals = tools.selTournament(
-                        population, k=k, tournsize=tournsize, fit_attr='fitness'
+                        population,
+                        k=k,
+                        tournsize=tournsize,
+                        fit_attr='fitness',
                     )
-                    
+
                     tournament = []
                     for individual in individuals:
                         random_gene = random.choice(all_genes)
                         artist = individual.artist
-                        gene = np.vstack((individual.gene, random_gene)) 
-                        image = individual.artist.draw_from_gene(individual.gene)
+                        gene = np.vstack((individual.gene, random_gene))
+                        image = individual.artist.draw_from_gene(
+                            individual.gene
+                        )
                         fitness = self._fitness_fcn([image], target=target)[0]
-                        tournament.append(Individual(image, gene, fitness, artist))
-                    
-                    best = max(
-                        tournament, key=operator.attrgetter('fitness')
-                    )
-                       
+                        tournament.append(
+                            Individual(image, gene, fitness, artist)
+                        )
+
+                    best = max(tournament, key=operator.attrgetter('fitness'))
+
                     # Randomly remove elementes
-                    best.gene = mut_delete(best.gene, mutpb=mutpb)
+                    best.gene = self._mut_delete(best.gene, mutpb=mutpb)
                     best.image = best.artist.draw_from_gene(best.gene)
-                    best.fitness = self._fitness_fcn([best.image], target=target)[0]
+                    best.fitness = self._fitness_fcn(
+                        [best.image], target=target
+                    )[0]
 
                     # Append child to next generation
                     next_pop.append(best)
@@ -263,12 +276,27 @@ class Trainer:
                 # Save to history
                 self.best_fitness_history.append(best_fitness)
                 self.avg_fitness_history.append(avg_fitness)
-                
+
                 gc.collect()
 
         # Get best child and return it
         best_child = max(population, key=operator.attrgetter('fitness'))
         return best_child
+
+    def _mut_delete(self, gene, mutpb):
+        """Creates a mutation by deleting some genes
+
+        Parameters
+        ----------
+        gene : np.ndarray
+            Gene representation of an image
+        mutpb : float
+            Mutation parameter
+        """
+        for element in gene:
+            if np.random.uniform() < mutpb:
+                gene = np.delete(gene, element, 0)
+        return gene
 
     def _batch_draw(self, genes=None):
         """Draw images from artists

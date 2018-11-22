@@ -129,7 +129,7 @@ def main():
     # Set colorscheme and dimensions
     if options.colorscheme is not None:
         t.set_colors(colorscheme=options.colorscheme)
-    t.set_dims(options.dimensions)
+    # t.set_dims(options.dimensions)
     # Perform optimization
     best = t.train(
         target=options.target,

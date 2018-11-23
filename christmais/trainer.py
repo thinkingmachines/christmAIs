@@ -137,6 +137,7 @@ class Trainer:
         mutpb=0.05,
         indpb=0.5,
         k=2,
+        popsize=30,
         tournsize=4,
         steps=100,
         outdir=None,
@@ -154,6 +155,9 @@ class Trainer:
             during uniform crossover and/or mutation.
         k : int (default is 2)
             Number of individuals to select during tournament selection
+        popsize : int (default is 30)
+            Size of the initial population as the size of each generation in the
+            gene pool evolves.
         tournsize : int (default is 4)
             Number of individuals participating in each tournament
         steps : int (default is 100)
@@ -219,7 +223,7 @@ class Trainer:
 
                 next_pop = []  # Next population
 
-                for idx in range(self.population):
+                for idx in range(popsize):
                     individuals = tools.selTournament(
                         population,
                         k=k,

@@ -70,6 +70,15 @@ def build_parser():
         required=True,
     )
     parser.add_argument(
+        '-P',
+        '--pool-size',
+        dest='pool_size',
+        help='Pool size for mutation',
+        type=int,
+        default=30,
+        required=False,
+    )
+    parser.add_argument(
         '-p',
         '--population',
         dest='population',
@@ -124,6 +133,7 @@ def main():
     t = Trainer(
         X=options.input_str,
         population=options.population,
+        pool_size=options.pool_size,
         dims=options.dimensions,
     )
     # Set colorscheme and dimensions

@@ -37,8 +37,8 @@ def test_batch_draw_return_shape():
 def test_batch_get_genes_return_shape():
     """Test if batch_get_genes return the expected shape"""
     population = 30
+    t = Trainer('Thinking Machines Data Science', population=population)
     expected_shape = (population, 10, 28)
-    t = Trainer('Thinking Machines Data Science', population)
     t._batch_draw()
     genes = t._batch_get_genes()
     assert genes.shape == expected_shape

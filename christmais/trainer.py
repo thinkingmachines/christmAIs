@@ -33,6 +33,7 @@ class Trainer:
         colorscheme=None,
         population=100,
         dims=(224, 224),
+        pool_size=30,
         seed=42,
         predictor_kwargs={},
         embedding_kwargs={},
@@ -48,7 +49,10 @@ class Trainer:
             Dictionary with keys 'background', 'layer1', 'layer2', 'layer3',
             and 'lines'
         population : int (default is 30)
-            Number of artists created
+            Initial population, number of artists created
+        pool_size : int (default is 30)
+            Size of the initial population as the size of each generation in the
+            gene pool as it evolves.
         dims : tuple of size 2
             Dimensions of the resulting image
         seed : int (default is 42)
@@ -61,6 +65,7 @@ class Trainer:
         self.logger = logging.getLogger(__name__)
         self.X = X
         self.population = population
+        self.pool_size = pool_size
         self.dims = dims
         self.seed = seed
         self.predictor_kwargs = predictor_kwargs
@@ -137,7 +142,6 @@ class Trainer:
         mutpb=0.05,
         indpb=0.5,
         k=2,
-        popsize=30,
         tournsize=4,
         steps=100,
         outdir=None,
@@ -155,9 +159,6 @@ class Trainer:
             during uniform crossover and/or mutation.
         k : int (default is 2)
             Number of individuals to select during tournament selection
-        popsize : int (default is 30)
-            Size of the initial population as the size of each generation in the
-            gene pool evolves.
         tournsize : int (default is 4)
             Number of individuals participating in each tournament
         steps : int (default is 100)
@@ -223,7 +224,7 @@ class Trainer:
 
                 next_pop = []  # Next population
 
-                for idx in range(popsize):
+                for idx in range(self.pool_size):
                     individuals = tools.selTournament(
                         population,
                         k=k,

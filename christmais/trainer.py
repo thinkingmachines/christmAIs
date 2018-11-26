@@ -13,10 +13,8 @@ import random
 # Import modules
 import coloredlogs
 import numpy as np
-from tqdm import trange
-
-# Import from package
 from deap import tools
+from tqdm import trange
 
 from .drawsys import Artist
 from .embedder import get_fasttext_pretrained

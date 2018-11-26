@@ -13,10 +13,8 @@ import coloredlogs
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-from gensim.test.utils import get_tmpfile
-
-# Import from package
 import torch
+from gensim.test.utils import get_tmpfile
 from torch.autograd import Variable
 from torchvision import models, transforms
 

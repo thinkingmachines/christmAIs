@@ -19,7 +19,7 @@ def test_fitness_function_return_type():
 
 def test_fitness_function_return_shape():
     """Test if the fitness function returns the same number of Artists"""
-    expected_shape = (30,)
+    expected_shape = (2,)
     t = Trainer('Thinking Machines Data Science', population=expected_shape[0])
     imgs = t._batch_draw()
     fitness = t._fitness_fcn(imgs, target='iron')
@@ -28,7 +28,7 @@ def test_fitness_function_return_shape():
 
 def test_batch_draw_return_shape():
     """Test if batch_draw returns the same number of Artists"""
-    nb_artists = 30
+    nb_artists = 2
     t = Trainer('Thinking Machines Data Science', population=nb_artists)
     imgs = t._batch_draw()
     assert len(imgs) == nb_artists
@@ -36,7 +36,7 @@ def test_batch_draw_return_shape():
 
 def test_batch_get_genes_return_shape():
     """Test if batch_get_genes return the expected shape"""
-    population = 30
+    population = 2
     t = Trainer('Thinking Machines Data Science', population=population)
     expected_shape = (population, 10, 28)
     t._batch_draw()
@@ -62,7 +62,7 @@ def test_set_colorscheme():
         'layer3': (0, 0, 255, 255),
         'lines': (0, 0, 0, 255),
     }
-    population = 5
+    population = 2
     t = Trainer('Thinking Machines Data Science', population=population)
     t.set_colors(colorscheme=color_scheme)
     assert t.artists[0].colors == color_scheme

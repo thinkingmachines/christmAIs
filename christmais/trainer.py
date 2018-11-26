@@ -11,6 +11,7 @@ import os
 import random
 
 # Import modules
+import coloredlogs
 import numpy as np
 from tqdm import trange
 
@@ -63,6 +64,7 @@ class Trainer:
             Arguments for FastTextWrapper() class
         """
         self.logger = logging.getLogger(__name__)
+        coloredlogs.install(logging.INFO, logger=self.logger)
         self.X = X
         self.population = population
         self.pool_size = pool_size

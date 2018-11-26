@@ -7,13 +7,12 @@
 import logging
 
 # Import modules
+import coloredlogs
 import numpy as np
 from gensim.models import FastText
 from gensim.test.utils import get_tmpfile
 from nltk.corpus import brown
 from sklearn.preprocessing import minmax_scale
-
-logging.basicConfig(level=logging.INFO)
 
 
 def get_fasttext_pretrained(load=False, **kwargs):
@@ -33,6 +32,7 @@ def get_fasttext_pretrained(load=False, **kwargs):
 
     """
     logger = logging.getLogger(__name__)
+    coloredlogs.install(logging.INFO, logger=logger)
     if load:
         fname = get_tmpfile('brown_fasttext.model')
         try:

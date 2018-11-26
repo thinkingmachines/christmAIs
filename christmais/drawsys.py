@@ -10,11 +10,10 @@ https://github.com/dribnet/dopes
 import logging
 
 # Import modules
+import coloredlogs
 import numpy as np
 from PIL import Image, ImageDraw
 from sklearn.preprocessing import minmax_scale
-
-logging.basicConfig(level=logging.INFO)
 
 
 class Artist:
@@ -66,6 +65,7 @@ class Artist:
             Dimensions of the resulting image
         """
         self.logger = logging.getLogger(__name__)
+        coloredlogs.install(logging.INFO, logger=self.logger)
         self.emb = embedding
         self.dims = dims
         self.colors = self._generate_colors(self.emb)

@@ -9,6 +9,7 @@ import operator
 import random
 
 # Import modules
+import coloredlogs
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
@@ -19,7 +20,6 @@ import torch
 from torch.autograd import Variable
 from torchvision import models, transforms
 
-logging.basicConfig(level=logging.INFO)
 LABEL_SOURCE_URL = 'https://s3.amazonaws.com/outcome-blog/imagenet/labels.json'
 PRETRAINED_MODELS = {
     'resnet152': models.resnet152(pretrained=True),
@@ -61,6 +61,7 @@ class Predictor:
             Random seed
         """
         self.logger = logging.getLogger(__name__)
+        coloredlogs.install(logging.INFO, logger=self.logger)
         # Set random seed
         self._set_seed(seed)
         # Get labels

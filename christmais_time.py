@@ -4,9 +4,14 @@
 
 
 # Import standard library
+import logging
 from argparse import ArgumentParser
 
+import coloredlogs
 from christmais import Trainer
+
+logger = logging.getLogger(__name__)
+coloredlogs.install(logging.INFO, logger=logger)
 
 
 def build_parser():
@@ -27,13 +32,12 @@ def build_parser():
         required=True,
     )
     parser.add_argument(
-        '-c',
-        '--colorscheme',
-        dest='colorscheme',
-        help='JSON filepath for set colorscheme',
+        '-t',
+        '--target',
+        dest='target',
+        help='Target ImageNet class',
         type=str,
-        default=None,
-        required=False,
+        required=True,
     )
     parser.add_argument(
         '-o',
@@ -42,6 +46,24 @@ def build_parser():
         help='Output directory of the best gene or image',
         type=str,
         required=True,
+    )
+    parser.add_argument(
+        '-S',
+        '--steps',
+        dest='steps',
+        help='No. of steps (default is 100)',
+        type=int,
+        default=100,
+        required=False,
+    )
+    parser.add_argument(
+        '-c',
+        '--colorscheme',
+        dest='colorscheme',
+        help='JSON filepath for set colorscheme',
+        type=str,
+        default=None,
+        required=False,
     )
     parser.add_argument(
         '-O',
@@ -53,27 +75,10 @@ def build_parser():
         required=False,
     )
     parser.add_argument(
-        '-S',
-        '--steps',
-        dest='steps',
-        help='No. of steps',
-        type=int,
-        default=100,
-        required=False,
-    )
-    parser.add_argument(
-        '-t',
-        '--target',
-        dest='target',
-        help='Target ImageNet class',
-        type=str,
-        required=True,
-    )
-    parser.add_argument(
         '-P',
         '--pool-size',
         dest='pool_size',
-        help='Pool size for mutation',
+        help='Pool size for mutation (default is 30)',
         type=int,
         default=30,
         required=False,
@@ -82,7 +87,7 @@ def build_parser():
         '-p',
         '--population',
         dest='population',
-        help='Gene population',
+        help='Gene population (default is 30)',
         type=int,
         default=30,
         required=False,
@@ -91,7 +96,7 @@ def build_parser():
         '-d',
         '--dimensions',
         dest='dimensions',
-        help='Image dimensions to create',
+        help='Image dimensions to create (default is [400, 400])',
         type=int,
         default=[400, 400],
         required=False,
@@ -100,7 +105,7 @@ def build_parser():
         '-m',
         '--mutpb',
         dest='mutpb',
-        help='Mutation probability',
+        help='Mutation probability (default is 0.3)',
         type=float,
         default=0.3,
         required=False,
@@ -109,7 +114,7 @@ def build_parser():
         '-I',
         '--indpb',
         dest='indpb',
-        help='Independent probability for shuffles',
+        help='Independent probability for shuffles (default is 0.5)',
         type=float,
         default=0.5,
         required=False,
@@ -118,7 +123,7 @@ def build_parser():
         '-s',
         '--tournsize',
         dest='tournsize',
-        help='Tournament selection size',
+        help='Tournament selection size (default is 4)',
         type=int,
         default=4,
         required=False,
@@ -127,6 +132,7 @@ def build_parser():
 
 
 def main():
+    logger.debug('Running christmais_time script')
     parser = build_parser()
     options = parser.parse_args()
     # Create a Trainer
@@ -152,7 +158,15 @@ def main():
     # Save best image
     best_gene = best.gene
     best_img = best.artist.draw_from_gene(best_gene)
-    best_img.save(options.output_dir)
+    try:
+        best_img.save(options.output_dir)
+    except ValueError:
+        msg = 'Please add a file type extension [.png, .jpg] to output file: {}'
+        logger.exception(msg.format(options.output_dir))
+        raise
+    else:
+        msg = 'Best gene saved at {}'
+        logger.info(msg.format(options.output_dir))
 
 
 if __name__ == "__main__":

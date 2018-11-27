@@ -62,6 +62,14 @@ def build_parser():
         required=True,
     )
     parser.add_argument(
+        '-D',
+        '--density',
+        dest='density',
+        help='Density for fast_train()',
+        type=int,
+        required=False,
+    )
+    parser.add_argument(
         '-S',
         '--steps',
         dest='steps',
@@ -142,6 +150,13 @@ def build_parser():
         default=4,
         required=False,
     )
+    parser.add_argument(
+        '-f',
+        '--fast-train',
+        dest='fast_train',
+        help='Use fast_train() method, not so much mutation',
+        action='store_true'
+    )
     return parser
 
 
@@ -159,6 +174,7 @@ def main():
     t = Trainer(
         X=options.input_str,
         population=options.population,
+        density=options.density,
         pool_size=options.pool_size,
         dims=options.dimensions,
     )
@@ -172,14 +188,24 @@ def main():
         t.set_colors(colorscheme=colorscheme)
     t.set_dims(options.dimensions)
     # Perform optimization
-    best = t.train(
-        target=options.target,
-        mutpb=options.mutpb,
-        indpb=options.indpb,
-        tournsize=options.tournsize,
-        steps=options.steps,
-        outdir=options.train_output_dir,
-    )
+    if options.fast_train:
+        best = t.fast_train(
+            target=options.target,
+            mutpb=options.mutpb,
+            indpb=options.indpb,
+            tournsize=options.tournsize,
+            steps=options.steps,
+            outdir=options.train_output_dir,
+        )
+    else:
+        best = t.train(
+            target=options.target,
+            mutpb=options.mutpb,
+            indpb=options.indpb,
+            tournsize=options.tournsize,
+            steps=options.steps,
+            outdir=options.train_output_dir,
+        )
     # Save best image and gene
     best_gene = best.gene
     gene_output_fp = options.output_dir + '/' + options.exp_id + '.txt'

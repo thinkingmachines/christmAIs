@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 
 # Import modules
 import coloredlogs
+import numpy as np
 import torch
 
 # Import from package
@@ -173,8 +174,8 @@ def main():
     )
     # Save best image
     best_gene = best.gene
-    with open('best_gene', 'w') as fp:
-        best_gene.tofile(fp)
+    with open('best_gene.txt', 'w') as fp:
+        np.savetxt(fp, best_gene)
     best_img = best.artist.draw_from_gene(best_gene)
     try:
         best_img.save(options.output_dir)

@@ -170,7 +170,7 @@ def main():
         for k, v in colorscheme.items():
             colorscheme[k] = tuple(v)
         t.set_colors(colorscheme=colorscheme)
-    # t.set_dims(options.dimensions)
+    t.set_dims(options.dimensions)
     # Perform optimization
     best = t.train(
         target=options.target,

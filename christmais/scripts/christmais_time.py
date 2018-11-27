@@ -155,7 +155,7 @@ def main():
     )
     # Set colorscheme and dimensions
     with open(options.colorscheme, 'r') as fp:
-        colorscheme = json.loads(fp)
+        colorscheme = json.load(fp)
     if options.colorscheme is not None:
         t.set_colors(colorscheme=colorscheme)
     # t.set_dims(options.dimensions)

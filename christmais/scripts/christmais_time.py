@@ -30,6 +30,14 @@ def build_parser():
     """
     parser = ArgumentParser()
     parser.add_argument(
+        '-x',
+        '--id',
+        dest='exp_id',
+        help='experiment ID',
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
         '-i',
         '--input-str',
         dest='input_str',
@@ -172,23 +180,18 @@ def main():
         steps=options.steps,
         outdir=options.train_output_dir,
     )
-    # Save best image
+    # Save best image and gene
     best_gene = best.gene
-    with open('best_gene.txt', 'w') as fp:
+    gene_output_fp = options.output_dir + '/' + options.exp_id + '.txt'
+    img_output_fp = options.output_dir + '/' + options.exp_id + '.png'
+    with open(gene_output_fp, 'w') as fp:
         np.savetxt(fp, best_gene)
-        logger.info('Saved best_gene to `best_gene.txt`')
+        msg = 'Saved gene encoding at {}'
+        logger.info(msg.format(gene_output_fp))
     best_img = best.artist.draw_from_gene(best_gene)
-    try:
-        best_img.save(options.output_dir)
-    except ValueError:
-        msg = (
-            'Please add a file type extension [.png, .jpg] to output file: {}'
-        )
-        logger.exception(msg.format(options.output_dir))
-        raise
-    else:
-        msg = 'Best gene saved at {}'
-        logger.info(msg.format(options.output_dir))
+    best_img.save(img_output_fp)
+    msg = 'Best image saved at {}'
+    logger.info(msg.format(img_output_fp))
 
 
 if __name__ == "__main__":

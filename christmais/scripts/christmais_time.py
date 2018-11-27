@@ -154,9 +154,12 @@ def main():
         dims=options.dimensions,
     )
     # Set colorscheme and dimensions
-    with open(options.colorscheme, 'r') as fp:
-        colorscheme = json.load(fp)
     if options.colorscheme is not None:
+        with open(options.colorscheme, 'r') as fp:
+            colorscheme = json.load(fp)
+        logger.debug('Converting lists into tuples')
+        for k, v in colorscheme.items():
+            colorscheme[k] = tuple(v)
         t.set_colors(colorscheme=colorscheme)
     # t.set_dims(options.dimensions)
     # Perform optimization

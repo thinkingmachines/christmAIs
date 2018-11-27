@@ -4,6 +4,7 @@
 
 
 # Import standard library
+import json
 import logging
 from argparse import ArgumentParser
 
@@ -153,8 +154,10 @@ def main():
         dims=options.dimensions,
     )
     # Set colorscheme and dimensions
+    with open(options.colorscheme, 'r') as fp:
+        colorscheme = json.loads(fp)
     if options.colorscheme is not None:
-        t.set_colors(colorscheme=options.colorscheme)
+        t.set_colors(colorscheme=colorscheme)
     # t.set_dims(options.dimensions)
     # Perform optimization
     best = t.train(

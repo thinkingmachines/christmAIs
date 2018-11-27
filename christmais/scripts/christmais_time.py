@@ -67,6 +67,7 @@ def build_parser():
         dest='density',
         help='Density for fast_train()',
         type=int,
+        default=10,
         required=False,
     )
     parser.add_argument(
@@ -121,6 +122,7 @@ def build_parser():
         help='Image dimensions to create (default is [400, 400])',
         type=int,
         default=[400, 400],
+        nargs='+',
         required=False,
     )
     parser.add_argument(

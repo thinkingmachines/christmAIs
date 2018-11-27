@@ -7,7 +7,11 @@
 import logging
 from argparse import ArgumentParser
 
+# Import modules
 import coloredlogs
+import torch
+
+# Import from package
 from christmais import Trainer
 
 logger = logging.getLogger(__name__)
@@ -133,6 +137,12 @@ def build_parser():
 
 def main():
     logger.debug('Running christmais_time script')
+    try:
+        device = torch.cuda.get_device_name(0)
+        logger.info('Using GPU: {}'.format(device))
+    except AssertionError:
+        logger.warning('NVIDIA/CUDA-enabled GPU not found. Using CPU')
+
     parser = build_parser()
     options = parser.parse_args()
     # Create a Trainer
@@ -161,7 +171,9 @@ def main():
     try:
         best_img.save(options.output_dir)
     except ValueError:
-        msg = 'Please add a file type extension [.png, .jpg] to output file: {}'
+        msg = (
+            'Please add a file type extension [.png, .jpg] to output file: {}'
+        )
         logger.exception(msg.format(options.output_dir))
         raise
     else:

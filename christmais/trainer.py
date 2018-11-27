@@ -33,6 +33,7 @@ class Trainer:
         population=100,
         dims=(224, 224),
         pool_size=30,
+        density=10,
         seed=42,
         predictor_kwargs={},
         embedding_kwargs={},
@@ -54,6 +55,8 @@ class Trainer:
             gene pool as it evolves.
         dims : tuple of size 2
             Dimensions of the resulting image
+        density : int
+            Sets the density for faster_train()
         seed : int (default is 42)
             Sets the random seed
         predictor_kwargs : dict
@@ -67,6 +70,7 @@ class Trainer:
         self.population = population
         self.pool_size = pool_size
         self.dims = dims
+        self.density = density
         self.seed = seed
         self.predictor_kwargs = predictor_kwargs
         self.embedding_kwargs = embedding_kwargs
@@ -136,10 +140,140 @@ class Trainer:
         for artist in self.artists:
             artist.dims = dims
 
+    def fast_train(
+        self,
+        target,
+        mutpb=0.3,
+        indpb=0.5,
+        k=2,
+        tournsize=4,
+        steps=100,
+        outdir=None,
+    ):
+        """Train and generate images using a genetic algorithm
+
+        Parameters
+        ----------
+        target : str
+            The target ImageNet class label.
+        mutpb : float (default is 0.3)
+            Mutation probability
+        indpb : float (default is 0.5)
+            Independent probability for each attribute to be exchanged/shuffled
+            during uniform crossover and/or mutation.
+        k : int (default is 2)
+            Number of individuals to select during tournament selection
+        tournsize : int (default is 4)
+            Number of individuals participating in each tournament
+        steps : int (default is 100)
+            The number of steps to run the optimization algorithm
+        outdir : str (default is None)
+            Output directory to where the images for each generation will be
+            saved
+
+        Returns
+        -------
+        christmais.trainer.Individual
+            The best child during the optimization run.
+        """
+        self.logger.warning(
+            'Faster train was called. Mutation here is unsophisticated!'
+        )
+        self.logger.info('Initializing population and histories...')
+        # Get initial images
+        imgs = self._batch_draw(density=self.density)
+
+        # Compute for fitness
+        fitness = self._fitness_fcn(imgs, target)
+        genes = self._batch_get_genes()
+
+        # Create initial population
+        init_population = [
+            Individual(img, gene, fitness, artist)
+            for img, gene, fitness, artist in zip(
+                imgs, genes, fitness, self.artists
+            )
+        ]
+
+        # Save to filesystem
+        if outdir is not None:
+            self.logger.info('Writing image files at {}'.format(outdir))
+            dir_ = outdir + '/gen00/'
+            for idx, indiv in enumerate(init_population):
+                if not os.path.exists(dir_):
+                    os.makedirs(dir_)
+                indiv.image.save(
+                    dir_ + '{}_{}.png'.format(str(idx).zfill(2), indiv.fitness)
+                )
+
+        # Start optimization via genetic algorithm
+        population = init_population.copy()
+        self.logger.info('Optimization has started')
+        with trange(steps, desc='GEN', ncols=100, unit='gen') as t:
+            for gen in t:
+
+                # Filesystem IO
+                if outdir is not None:
+                    dir_ = outdir + '/gen{}/'.format(str(gen + 1).zfill(2))
+
+                next_pop = []  # Next population
+
+                for idx in range(len(population)):
+                    # Select parents using tournament selection
+                    parents = tools.selTournament(
+                        population, k=2, tournsize=4, fit_attr='fitness'
+                    )
+                    best_parent = max(
+                        parents, key=operator.attrgetter('fitness')
+                    )
+
+                    # Generate new child using uniform crossover
+                    c_artist = best_parent.artist
+                    c_gene = tools.cxUniform(
+                        parents[0].gene.copy(), parents[1].gene.copy(), indpb
+                    )[0]
+                    if np.random.uniform() < mutpb:
+                        c_gene = tools.mutShuffleIndexes(c_gene, indpb)[0]
+                    c_image = c_artist.draw_from_gene(c_gene)
+                    c_fitness = self._fitness_fcn([c_image], target=target)[0]
+                    child = Individual(c_image, c_gene, c_fitness, c_artist)
+
+                    # Append child to next generation
+                    next_pop.append(child)
+
+                    # Filesystem IO
+                    if outdir is not None:
+                        if not os.path.exists(dir_):
+                            os.makedirs(dir_)
+                        child.image.save(
+                            dir_
+                            + '{}_{}.png'.format(
+                                str(idx).zfill(2), child.fitness
+                            )
+                        )
+
+                # Set new population
+                population = next_pop
+
+                # Get fitness
+                best_fitness = max(
+                    population, key=operator.attrgetter('fitness')
+                ).fitness
+                avg_fitness = np.mean([indiv.fitness for indiv in population])
+                t.set_postfix({'best': best_fitness, 'avg': avg_fitness})
+
+                # Save to history
+                self.best_fitness_history.append(best_fitness)
+                self.avg_fitness_history.append(avg_fitness)
+
+        # Get best child and return it
+        best_child = max(population, key=operator.attrgetter('fitness'))
+        return best_child
+
     def train(
         self,
         target,
-        mutpb=0.05,
+        mutpb=0.3,
         indpb=0.5,
         k=2,
         tournsize=4,
@@ -303,10 +437,17 @@ class Trainer:
                 gene = np.delete(gene, element, 0)
         return gene
 
-    def _batch_draw(self, genes=None):
+    def _batch_draw(self, density=10, genes=None):
         """Draw images from artists
 
-        If genes are supplied, then it uses draw as reference
+        If genes are supplied, then draw uses it as reference
+
+        Parameters
+        ----------
+        density : int (default is 10)
+            Amount of shapes being drawn
+        genes : np.ndarray (default is None)
+            If supplied, then used as reference
 
         Returns
         -------
@@ -317,7 +458,7 @@ class Trainer:
             self.logger.debug('Using genes as reference')
             imgs = [a.draw_from_gene(g) for a, g in zip(self.artists, genes)]
         else:
-            imgs = [a.draw() for a in self.artists]
+            imgs = [a.draw(density=density) for a in self.artists]
         return imgs
 
     def _batch_get_genes(self, ravel=False):

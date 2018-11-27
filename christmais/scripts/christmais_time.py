@@ -173,6 +173,8 @@ def main():
     )
     # Save best image
     best_gene = best.gene
+    with open('best_gene', 'w') as fp:
+        best_gene.tofile(fp)
     best_img = best.artist.draw_from_gene(best_gene)
     try:
         best_img.save(options.output_dir)

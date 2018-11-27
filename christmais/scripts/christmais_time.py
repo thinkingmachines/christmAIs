@@ -176,6 +176,7 @@ def main():
     best_gene = best.gene
     with open('best_gene.txt', 'w') as fp:
         np.savetxt(fp, best_gene)
+        logger.info('Saved best_gene to `best_gene.txt`')
     best_img = best.artist.draw_from_gene(best_gene)
     try:
         best_img.save(options.output_dir)

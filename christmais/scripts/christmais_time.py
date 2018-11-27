@@ -30,7 +30,7 @@ def build_parser():
     """
     parser = ArgumentParser()
     parser.add_argument(
-        '-I',
+        '-x',
         '--id',
         dest='exp_id',
         help='experiment ID',
@@ -182,8 +182,8 @@ def main():
     )
     # Save best image and gene
     best_gene = best.gene
-    gene_output_fp = options.output_dir + options.exp_id + '.txt'
-    img_output_fp = options.output_dir + options.exp_id + '.png'
+    gene_output_fp = options.output_dir + '/' + options.exp_id + '.txt'
+    img_output_fp = options.output_dir + '/' + options.exp_id + '.png'
     with open(gene_output_fp, 'w') as fp:
         np.savetxt(fp, best_gene)
         msg = 'Saved gene encoding at {}'

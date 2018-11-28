@@ -2,12 +2,13 @@
 
 """Parse a given text to get the nearest QuickDraw class"""
 
+# Import standard library
 import logging
+
+# Import modules
 import coloredlogs
-import numpy as np
-
-
 import gensim.downloader as api
+import numpy as np
 
 
 class Parser:
@@ -37,3 +38,23 @@ class Parser:
         with open(categories, 'r') as fp:
             x = fp.readlines()
         self.categories = [cat.rstrip() for cat in x]
+
+    def get_most_similar(self, query):
+        """Get most similar word based on model
+
+        Parameters
+        ----------
+        query : str
+            Input string
+
+        Returns
+        -------
+        (str, float)
+            Most similar word and similarity score
+        """
+        similarity_scores = [
+            self.model.wv.similarity(query, cls) for cls in self.categories
+        ]
+        sim_label = self.categories[np.argmax(similarity_scores)]
+        sim_score = np.max(similarity_scores)
+        return sim_label, sim_score

@@ -147,3 +147,27 @@ generations is returned.
 # after training
 best_individual.artist.draw()
 ```
+
+## It's christmAIs time!
+
+We also provided a console interface to easily generate abstract art, `christmais_time.py`. 
+Once you have installed `christmais` in your `site-packages`, then you can run the script via:
+
+```shell
+python -m christmais.scripts.christmais_time [--ARGS]
+```
+
+To see all available arguments, just pass `--help`. If you wish to set the colorscheme,
+simply create a JSON file and pass it to the `--colorscheme` argument:
+
+```json
+# Sample color scheme for black lines only
+# Background is white, circles are invisible, lines are black
+{
+    "background": [255, 255, 255, 255], 
+    "layer1": [255, 255, 255, 0], 
+    "layer2": [0, 0, 0, 0], 
+    "layer3": [0, 0, 0, 0], 
+    "lines": [0, 0, 0, 255]
+}
+```

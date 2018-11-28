@@ -15,17 +15,15 @@ class Parser:
     """Parser class to get the most similar word"""
 
     def __init__(
-        self,
-        model='fasttext-wiki-news-subwords-300',
-        categories='categories.txt',
+        self, model='glove-wiki-gigaword-50', categories='categories-lite.txt'
     ):
         """Initialize the class with a pretrained FastText model
 
         Parameters
         ----------
-        model : str (default is fasttext-wiki-news-subwords-300)
+        model : str (default is `glove-wiki-gigaword-50`)
             Model to use
-        categories : str (default is 'categories.txt')
+        categories : str (default is 'categories-lite.txt')
             Location of category strings for Quick, Draw!
         """
         # Initialize the logger
@@ -52,9 +50,17 @@ class Parser:
         (str, float)
             Most similar word and similarity score
         """
-        similarity_scores = [
+        query_parts = query.split()
+        cat = [self._get_similar(query)[0] for query in query_parts]
+        scores = [self._get_similar(query)[1] for query in query_parts]
+        sim_label = cat[np.argmax(scores)]
+        sim_score = np.max(scores)
+        return sim_label, sim_score
+
+    def _get_similar(self, query):
+        scores = [
             self.model.wv.similarity(query, cls) for cls in self.categories
         ]
-        sim_label = self.categories[np.argmax(similarity_scores)]
-        sim_score = np.max(similarity_scores)
+        sim_label = self.categories[np.argmax(scores)]
+        sim_score = np.max(scores)
         return sim_label, sim_score

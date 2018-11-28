@@ -15,7 +15,7 @@ class Parser:
     """Parser class to get the most similar word"""
 
     def __init__(
-        self, model='glove-wiki-gigaword-50', categories='categories-lite.txt'
+        self, model='glove-wiki-gigaword-50', categories='categories.txt'
     ):
         """Initialize the class with a pretrained FastText model
 
@@ -33,9 +33,14 @@ class Parser:
         self.logger.info('Initializing model: {}'.format(model))
         self.model = api.load(model)
         self.logger.info('Initializing categories: {}'.format(categories))
-        with open(categories, 'r') as fp:
-            x = fp.readlines()
-        self.categories = [cat.rstrip() for cat in x]
+        self.categories = self._read_categories(categories)
+        self.basis = self._read_categories('basis.txt')
+
+    def _read_categories(self, category):
+        """Read category files"""
+        with open(category, 'r') as fp:
+            data = fp.readlines()
+        return [d.rstrip() for d in data]
 
     def get_most_similar(self, query):
         """Get most similar word based on model
@@ -63,9 +68,26 @@ class Parser:
                 score_list.append(scores)
         sim_label = cat_list[np.argmax(score_list)]
         sim_score = np.max(score_list)
-        return sim_label, sim_score
+        return self._get_actual_label(sim_label), sim_score
+
+    def _get_actual_label(self, label):
+        """Get the actual label
+
+        Parameters
+        ----------
+        label : str
+            The input label
+
+        Returns
+        -------
+        str
+            Actual label from Quick, Draw! categories
+        """
+        idx = self.categories.index(label)
+        return self.basis[idx]
 
     def _get_similar(self, query):
+        """Get similar word for a 1-word query"""
         scores = [
             self.model.wv.similarity(query, cls) for cls in self.categories
         ]

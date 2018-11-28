@@ -50,11 +50,19 @@ class Parser:
         (str, float)
             Most similar word and similarity score
         """
-        query_parts = query.split()
-        cat = [self._get_similar(query)[0] for query in query_parts]
-        scores = [self._get_similar(query)[1] for query in query_parts]
-        sim_label = cat[np.argmax(scores)]
-        sim_score = np.max(scores)
+        query_parts = query.lower().split()
+        cat_list = []
+        score_list = []
+        for query in query_parts:
+            try:
+                cat, scores = self._get_similar(query)
+            except KeyError:
+                pass
+            else:
+                cat_list.append(cat)
+                score_list.append(scores)
+        sim_label = cat_list[np.argmax(score_list)]
+        sim_score = np.max(score_list)
         return sim_label, sim_score
 
     def _get_similar(self, query):

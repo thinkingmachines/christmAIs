@@ -3,6 +3,7 @@
 """Parse a given text to get the nearest QuickDraw class"""
 
 # Import standard library
+import glob
 import logging
 
 # Import modules
@@ -23,7 +24,7 @@ class Parser:
         ----------
         model : str (default is `glove-wiki-gigaword-50`)
             Model to use
-        categories : str (default is 'categories-lite.txt')
+        categories : str (default is 'categories.txt')
             Location of category strings for Quick, Draw!
         """
         # Initialize the logger
@@ -34,11 +35,12 @@ class Parser:
         self.model = api.load(model)
         self.logger.info('Initializing categories: {}'.format(categories))
         self.categories = self._read_categories(categories)
-        self.basis = self._read_categories('basis.txt')
 
     def _read_categories(self, category):
         """Read category files"""
-        with open(category, 'r') as fp:
+        with open(
+            glob.glob('**/categories.txt', recursive=True)[0], 'r'
+        ) as fp:
             data = fp.readlines()
         return [d.rstrip() for d in data]
 
@@ -83,8 +85,25 @@ class Parser:
         str
             Actual label from Quick, Draw! categories
         """
-        idx = self.categories.index(label)
-        return self.basis[idx]
+        # Actual quickdraw names
+        qd_names = {
+            "clock": "alarm_clock",
+            "board": "diving_board",
+            "ship": "cruise_ship",
+            "hydrant": "fire_hydrant",
+            "tree": "palm_tree",
+            "outlet": "power_outlet",
+            "painting": "the_mona_lisa",
+        }
+        if label in qd_names.keys():
+            self.logger.debug(
+                'Converting label to Quick, Draw! compliant labels'
+            )
+            actual_label = qd_names[label]
+        else:
+            actual_label = label
+
+        return actual_label
 
     def _get_similar(self, query):
         """Get similar word for a 1-word query"""

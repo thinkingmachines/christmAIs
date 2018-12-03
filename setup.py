@@ -14,7 +14,7 @@ with open('requirements-dev.txt') as f:
 
 setup(
     name="christmais",
-    version="1.0.0",
+    version="2.0.0",
     description="Text to abstract art for the holidays!",
     long_description=readme,
     long_description_content_type="text/markdown",

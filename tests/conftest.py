@@ -17,4 +17,4 @@ def parser():
 @pytest.fixture
 def styler():
     """Create a pre-made styler"""
-    return Styler(checkpoint=glob.glob('**/'))
+    return None

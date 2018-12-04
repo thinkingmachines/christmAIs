@@ -184,8 +184,8 @@ class Styler:
         )
         # Define the model
         stylized_images, _, _, bottleneck_feat = build_model.build_model(
-            content_input=content_img_preprocessed,
-            style_input=style_img_preprocessed,
+            content_img_preprocessed,
+            style_img_preprocessed,
             trainable=False,
             is_training=False,
             inception_end_point='Mixed_6e',

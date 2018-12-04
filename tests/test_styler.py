@@ -9,3 +9,7 @@ import glob
 import numpy as np
 import pytest
 from christmais.styler import Styler
+
+
+def test_stub():
+    pass

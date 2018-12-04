@@ -285,7 +285,7 @@ class Styler:
     def _save_image(self, img, output_file):
         self.logger.info('Saving stylized image at: {}'.format(output_file))
         img = np.uint8(img * 255.0)
-        plt.imssave(output_file, img, dpi=300)
+        plt.imsave(output_file, img, dpi=300)
 
     def style_transfer(
         self,

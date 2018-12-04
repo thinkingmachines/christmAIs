@@ -189,7 +189,7 @@ class Styler:
             trainable=False,
             is_training=False,
             inception_end_point='Mixed_6e',
-            style_prediction_bottleneckj=100,
+            style_prediction_bottleneck=100,
             adds_losses=False,
         )
 

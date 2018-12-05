@@ -77,3 +77,4 @@ target/
 .envrc
 .env
 ckpt
+output

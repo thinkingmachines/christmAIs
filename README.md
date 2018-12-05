@@ -18,7 +18,7 @@ This results to images that look like these:
 ![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/sf1.png?token=AMWYsxAr2m8Nc7UiermGFKgd9Z6atjuLks5cDc9fwA%3D%3D)
 ![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/truck1.png?token=AMWYs2dz3AMOGdS1ScaCGBWyvo-_VxRgks5cDdBvwA%3D%3D)
 
-## Setup
+## Setup and Installation
 
 Please see `requirements.txt` and `requirements-dev.txt` for all Python-related
 dependencies. Notable dependencies include:
@@ -58,6 +58,18 @@ $ apt-get update && \
 # Install magenta
 $ venv/bin/pip install magenta
 
+```
+
+### Downloading the pretrained model
+
+A pretrained model based from the Painter by Number (PBN) dataset and Describable
+Textures Dataset (DTD) is provided (around 600+ MB). To download them, simply
+execute the following command:
+
+```shell
+$ mkdir ckpt && \
+  wget https://storage.googleapis.com/download.magenta.tensorflow.org/models/arbitrary_style_transfer.tar.gz && \
+  tar --strip-components 1 -xvzf arbitrary_style_transfer.tar.gz -C ckpt/   
 ```
 
 ### Installing everything else

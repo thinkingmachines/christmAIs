@@ -53,7 +53,7 @@ or do the following steps:
 ```shell
 # Install OS dependencies 
 $ apt-get update && \
-$ apt-get install -y build-essential libasound2-dev libjack-dev
+  apt-get install -y build-essential libasound2-dev libjack-dev
 
 # Install magenta
 $ venv/bin/pip install magenta

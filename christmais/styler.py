@@ -65,6 +65,34 @@ class Styler:
             img_preprocessed = image_utils.resize_image(img_ph, size)
         return img_preprocessed
 
+    def _get_img_lists(self, content_path, style_path, max_styles):
+        """Get content and style image lists
+
+        Parameters
+        ----------
+        content_path : str
+            Path to content images
+        style_path : str
+            Path to style images
+        max_styles : int
+            Maximum number of styles
+
+        Returns
+        -------
+        (list, list)
+            Content image list and style image list
+        """
+        content_img_list = glob.glob(content_path, recursive=True)
+        style_img_list = glob.glob(style_path, recursive=True)
+        if len(style_img_list) > max_styles:
+            self.logger.warn(
+                'Image list is greater than max_styles_to_evaluate'
+            )
+            np.random.seed(1234)
+            style_img_list = np.random.permutation(style_img_list)
+            style_img_list = style_img_list[:max_styles]
+        return (content_img_list, style_img_list)
+
     def _get_data_and_name(self, img_path):
         """Get data as numpy array and name of file
 
@@ -108,34 +136,6 @@ class Styler:
         output_path = os.path.join(self.output, '{}.jpg'.format(img_name))
         image_utils.save_np_image(img_cropped_resized_np, output_path)
         self.logger.debug('Image saved at {}'.format(output_path))
-
-    def _get_img_lists(self, content_path, style_path, max_styles):
-        """Get content and style image lists
-
-        Parameters
-        ----------
-        content_path : str
-            Path to content images
-        style_path : str
-            Path to style images
-        max_styles : int
-            Maximum number of styles
-
-        Returns
-        -------
-        (list, list)
-            Content image list and style image list
-        """
-        content_img_list = tf.gfile.Glob(content_path)
-        style_img_list = tf.gfile.Glob(style_path)
-        if len(style_img_list) > max_styles:
-            self.logger.warn(
-                'Image list is greater than max_styles_to_evaluate'
-            )
-            np.random.seed(1234)
-            style_img_list = np.random.permutation(style_img_list)
-            style_img_list = style_img_list[:max_styles]
-        return (content_img_list, style_img_list)
 
     def _run_tf_graph(
         self,

@@ -1,5 +1,3 @@
-images: ['gcr.io/$PROJECT_ID/christmais']
-timeout: 900s
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: pull-christmais
@@ -19,3 +17,7 @@ steps:
 - name: 'gcr.io/$PROJECT_ID/christmais:$BUILD_ID'
   id: run-checks
   waitFor: ['build-christmais']
+images: ['gcr.io/$PROJECT_ID/christmais']
+timeout: 900s
+options:
+ machineType: 'N1_HIGHCPU_8'

@@ -82,8 +82,8 @@ class Styler:
         (list, list)
             Content image list and style image list
         """
-        content_img_list = glob.glob(content_path, recursive=True)
-        style_img_list = glob.glob(style_path, recursive=True)
+        content_img_list = glob.glob('./**/{}'.format(content_path), recursive=True)
+        style_img_list = glob.glob('./**/{}'.format(style_path), recursive=True)
         if len(style_img_list) > max_styles:
             self.logger.warn(
                 'Image list is greater than max_styles_to_evaluate'
@@ -136,6 +136,11 @@ class Styler:
         output_path = os.path.join(self.output, '{}.jpg'.format(img_name))
         image_utils.save_np_image(img_cropped_resized_np, output_path)
         self.logger.debug('Image saved at {}'.format(output_path))
+
+    def _save_image(self, img, output_file):
+        self.logger.info('Saving stylized image at: {}'.format(output_file))
+        img = np.uint8(img * 255.0)
+        plt.imsave(output_file, img, dpi=300)
 
     def _run_tf_graph(
         self,
@@ -282,11 +287,6 @@ class Styler:
                     )
                     self._save_image(stylized_image_res[0], fname)
 
-    def _save_image(self, img, output_file):
-        self.logger.info('Saving stylized image at: {}'.format(output_file))
-        img = np.uint8(img * 255.0)
-        plt.imsave(output_file, img, dpi=300)
-
     def style_transfer(
         self,
         content_path,
@@ -322,12 +322,12 @@ class Styler:
         with tf.Graph().as_default(), tf.Session() as sess:
             self._run_tf_graph(
                 sess,
-                content_path,
-                style_path,
-                content_size,
-                style_size,
-                content_square_crop,
-                style_square_crop,
-                interp_weights,
-                max_styles_to_evaluate,
+                content_path=content_path,
+                style_path=style_path,
+                content_size=content_size,
+                style_size=style_size,
+                content_square_crop=content_square_crop,
+                style_square_crop=style_square_crop,
+                interp_weights=interp_weights,
+                max_styles_to_evaluate=max_styles_to_evaluate,
             )

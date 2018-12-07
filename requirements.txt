@@ -62,6 +62,7 @@ resampy==0.2.1
 s3transfer==0.1.13
 scikit-learn==0.20.0
 scipy==1.1.0
+selenium==3.141.0
 six==1.11.0
 smart-open==1.7.1
 sortedcontainers==2.1.0

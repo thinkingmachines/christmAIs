@@ -291,7 +291,7 @@ class Styler:
         self,
         content_path,
         style_path,
-        content_size=256,
+        content_size=400,
         style_size=256,
         content_square_crop=False,
         style_square_crop=True,

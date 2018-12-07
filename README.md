@@ -29,6 +29,7 @@ dependencies. Notable dependencies include:
 - matplotlib==2.1.0
 - tensorflow
 - gensim
+- magenta
 
 The build steps (what we're using to do automated builds in the cloud) can be
 seen in the
@@ -60,24 +61,21 @@ $ venv/bin/pip install magenta
 
 ```
 
-### Downloading the pretrained model
-
-A pretrained model based from the Painter by Number (PBN) dataset and Describable
-Textures Dataset (DTD) is provided (around 600+ MB). To download them, simply
-execute the following command:
-
-```shell
-$ mkdir ckpt && \
-  wget https://storage.googleapis.com/download.magenta.tensorflow.org/models/arbitrary_style_transfer.tar.gz && \
-  tar --strip-components 1 -xvzf arbitrary_style_transfer.tar.gz -C ckpt/   
-```
 
 ### Installing everything else
 
 You can then install the remaining dependencies in `requirements.txt`. Assuming
-that you have create a virtual environment via `make venv`, you can simply run
-the following command:
+that you have create a virtual environment via `make venv`, we recommend that
+you simply run the following command:
 
 ```shell
 $ make build # or `make dev`
 ```
+
+This will also download (via `wget`) the following files:
+- **categories.txt** (683 B): contains the list of Quick, Draw! categories to compare a string upon (will be saved at `./categories/categories.txt`).
+- **arbitrary_style_transfer.tar.gz** (606.20 MB): contains the model checkpoint for style
+    transfer (will be saved at `./ckpt/model.ckpt`).
+- **chromedriver** (5.09 MB): contains the web driver for accessing the HTML output for
+    Sketch-RNN (will be saved at `./webdriver/chromedriver`).
+

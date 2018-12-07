@@ -15,6 +15,8 @@ build: venv requirements.txt
 	    wget https://chromedriver.storage.googleapis.com/2.44/chromedriver_linux64.zip && \
 	    unzip chromedriver_*.zip -d webdriver
 	@echo "WebDriver stored in ./webdriver/chromedriver"
+	@echo "Installing system dependencies for magenta (SUDO required)"
+	sudo apt-get install build-essential libasound2-dev libjack-dev
 	@echo "Installing requirements..."
 	venv/bin/pip-sync
 	@echo "Installing christmAIs..."
@@ -35,8 +37,12 @@ dev: venv requirements-dev.txt
 	    wget https://chromedriver.storage.googleapis.com/2.44/chromedriver_linux64.zip && \
 	    unzip chromedriver_*.zip -d webdriver
 	@echo "WebDriver stored in ./webdriver/chromedriver"
+	@echo "Installing system dependencies for magenta (SUDO required)"
+	sudo apt-get install build-essential libasound2-dev libjack-dev
 	@echo "Installing dev requirements..."
 	venv/bin/pip-sync requirements-dev.txt
+	@echo "Installing christmAIs..."
+	venv/bin/python3 setup.py install --user
 venv:
 	python3 -m venv venv
 	venv/bin/pip3 install pip-tools

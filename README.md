@@ -43,7 +43,26 @@ $ cd christmAIs
 $ make venv
 ```
 
-### Installing magenta
+### Automated Install
+
+We created an automated install script to perform a one-click setup in your
+workspace. To run the script, execute the following command:
+
+```shell
+$ curl https://storage.googleapis.com/tm-christmais/install-christmais.sh > install-christmais.sh
+$ bash install-christmais.sh
+```
+
+It is recommended to perform these steps inside a virtual environment. It will
+first install `magenta` and its dependencies, download file dependencies
+(`categories.txt`, `model.ckpt`, and `chromedriver`), then clone and install
+this package.
+
+### Manual Install
+
+For manual installation, please follow the instructions below:
+
+#### Installing magenta
 
 The style transfer capabilities are dependent on the
 [magenta](https://github.com/tensorflow/magenta) package. As of now, magenta is
@@ -61,8 +80,7 @@ $ venv/bin/pip install magenta
 
 ```
 
-
-### Installing everything else
+#### Installing everything else
 
 You can then install the remaining dependencies in `requirements.txt`. Assuming
 that you have create a virtual environment via `make venv`, we recommend that

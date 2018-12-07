@@ -76,5 +76,11 @@ target/
 .DS_Store
 .envrc
 .env
+
+# Downloaded files
+categories
 ckpt
+chromedriver
 output
+*.tar.gz
+*.zip

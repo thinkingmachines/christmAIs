@@ -73,7 +73,7 @@ def main():
     coloredlogs.install(logging.INFO, logger=logger)
 
     # Initialize classes
-    p = Parser(categories=options.categories)
+    p = Parser(categories=options.categories_path)
     d = Drawer(webdriver_path=options.webdriver_path)
     s = Styler(checkpoint=options.model_path, output='./output')
 

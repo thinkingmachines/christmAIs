@@ -37,9 +37,15 @@ class Parser:
         self.categories = self._read_categories(categories)
 
     def _read_categories(self, category):
-        """Read category files"""
+        """Read category files
+
+        Parameters
+        ----------
+        category : str
+            Name of categories file
+        """
         with open(
-            glob.glob('**/categories.txt', recursive=True)[0], 'r'
+            glob.glob('./**/{}'.format(category), recursive=True)[0], 'r'
         ) as fp:
             data = fp.readlines()
         return [d.rstrip() for d in data]

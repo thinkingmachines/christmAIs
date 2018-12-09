@@ -49,6 +49,15 @@ class Drawer:
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
         self.driver = webdriver.Chrome(webdriver_path, chrome_options=options)
+        self.index_folder = './generated_html/'
+        self.png_folder = './generated_png/'
+        # Create artifacts folder
+        if not os.path.exists(self.index_folder):
+            self.logger.debug('Creating html directory...')
+            os.makedirs(self.index_folder)
+        if not os.path.exists(self.png_folder):
+            self.logger.debug('Creating png directory...')
+            os.makedirs(self.png_folder)
 
     def draw(self, label, outfile):
         """Generate an image based on the output label
@@ -60,9 +69,10 @@ class Drawer:
         outfile : str
             Path to save the resulting image into
         """
-        # create an html file first
-        self._create_index_html(label)
-        self._draw_png(outfile)
+        # Create an html file first: (outfile).html
+        self._create_index_html(outfile=outfile, label=label)
+        # Then draw a 3x3 image from (outfile).html: (outfile).png
+        self._draw_png(outfile=outfile)
 
     def _read_categories(self, category='categories.txt'):
         """Read category files
@@ -78,11 +88,13 @@ class Drawer:
             data = fp.readlines()
         return [d.rstrip() for d in data]
 
-    def _create_index_html(self, label):
+    def _create_index_html(self, outfile, label):
         """Generate an HTML file with all the necessary packages loaded
 
         Parameters
         ----------
+        outfile: str
+            Filename to save index.html into (no file extension)
         label : str
             Quick, Draw! class
         """
@@ -94,7 +106,7 @@ class Drawer:
 
         categories = self._read_categories()
         if label in categories:
-            with open('index.html', 'w') as fp:
+            with open(self.index_folder + outfile + '.html', 'w') as fp:
                 fp.write(
                     HTML_TEMPLATE.format(
                         model=label,
@@ -105,7 +117,9 @@ class Drawer:
                         generate_path=generate_path[0],
                     )
                 )
-                self.logger.debug('Created index.html file!')
+                self.logger.debug(
+                    'Created index file!: {}.html'.format(outfile)
+                )
         else:
             msg = 'Missing {} in categories.txt!'
             self.logger.error(msg.format(label))
@@ -119,10 +133,10 @@ class Drawer:
         outfile : str
             Path to save the resulting image into
         """
-        index_path = os.path.abspath('index.html')
+        index_path = os.path.abspath(self.index_folder + outfile + '.html')
         index_uri = pathlib.Path(index_path).as_uri()
-        self.logger.debug('Opening index.html...')
+        self.logger.debug('Opening index file: {}.html'.format(outfile))
         self.driver.get(index_uri)
         svg = self.driver.find_element_by_tag_name('svg')
-        svg.screenshot(outfile + '.png')
-        self.logger.debug('Screenshot saved at {}'.format(outfile))
+        svg.screenshot(self.png_folder + outfile + '.png')
+        self.logger.debug('Screenshot saved at {}.png'.format(outfile))

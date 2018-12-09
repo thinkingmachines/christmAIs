@@ -86,8 +86,9 @@ def main():
     logger.info('Drawing Quick, Draw! class...')
     d.draw(label=label, outfile=options.output)
     ## Style the output file
-    logger.info('Applying style transfer')
-    s.style_transfer(content_path=options.output, style_path=options.style)
+    logger.info('Applying style transfer...')
+    content_path = options.output + '.png'  # output file
+    s.style_transfer(content_path=content_path, style_path=options.style)
     logger.info('Done!')
 
 

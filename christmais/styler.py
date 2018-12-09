@@ -223,15 +223,6 @@ class Styler:
                 img_path=content_img_path
             )
 
-            # Save preprocessed content image
-            self._save_preprocessed_img(
-                sess=sess,
-                img_preprocessed=content_img_preprocessed,
-                img_ph=content_img_ph,
-                img_np=content_img_np,
-                img_name=content_img_name,
-            )
-
             # Compute bottleneck features of the style prediction network
             # for the identity transform
             identity_params = sess.run(
@@ -254,15 +245,6 @@ class Styler:
                             style_img_name,
                         )
                     )
-
-                # Save preprocessed style image
-                self._save_preprocessed_img(
-                    sess=sess,
-                    img_preprocessed=style_img_preprocessed,
-                    img_ph=style_img_ph,
-                    img_np=style_img_np,
-                    img_name=style_img_name,
-                )
 
                 # Compute bottleneck features of the style prediction
                 style_params = sess.run(

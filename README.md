@@ -130,7 +130,7 @@ $ python -m christmais.tasks.christmais_time    \
 
 This will then generate the output image in `./artifacts/`:
 
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/tmds.png?token=AMWYs2dz3AMOGdS1ScaCGBWyvo-_VxRgks5cDdBvwA%3D%3D)
+![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/tmds.png?token=AMWYszrMQu4tWjV810d4Wu4a1Oe9_3Mpks5cFfEtwA%3D%3D)
 
 ## References
 

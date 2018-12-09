@@ -98,11 +98,12 @@ class Drawer:
         label : str
             Quick, Draw! class
         """
-        p5_path = glob.glob('./**/p5.js', recursive=True)
-        p5_svg_path = glob.glob('./**/p5.svg.js', recursive=True)
-        numjs_path = glob.glob('./**/numjs.js', recursive=True)
-        sketch_rnn_path = glob.glob('./**/sketch_rnn.js', recursive=True)
-        generate_path = glob.glob('./**/generate.js', recursive=True)
+        source_uri = 'https://storage.googleapis.com/tm-christmais/cdn/'
+        p5_path = source_uri + 'p5.js'
+        p5_svg_path = source_uri + 'p5.svg.js'
+        numjs_path = source_uri + 'numjs.js'
+        sketch_rnn_path = source_uri + 'sketch_rnn.js'
+        generate_path = source_uri + 'generate.js'
 
         categories = self._read_categories()
         if label in categories:
@@ -110,11 +111,11 @@ class Drawer:
                 fp.write(
                     HTML_TEMPLATE.format(
                         model=label,
-                        p5_path=p5_path[0],
-                        p5_svg_path=p5_svg_path[0],
-                        numjs_path=numjs_path[0],
-                        sketch_rnn_path=sketch_rnn_path[0],
-                        generate_path=generate_path[0],
+                        p5_path=p5_path,
+                        p5_svg_path=p5_svg_path,
+                        numjs_path=numjs_path,
+                        sketch_rnn_path=sketch_rnn_path,
+                        generate_path=generate_path,
                     )
                 )
                 self.logger.debug(

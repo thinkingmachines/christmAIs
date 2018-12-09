@@ -75,7 +75,7 @@ def main():
     # Initialize classes
     p = Parser(categories=options.categories_path)
     d = Drawer(webdriver_path=options.webdriver_path)
-    s = Styler(checkpoint=options.model_path, output='./output')
+    s = Styler(checkpoint=options.model_path, output='./artifacts')
 
     # Pipeline
     ## Get most similar Quick, Draw! class

@@ -124,5 +124,5 @@ class Drawer:
         self.logger.debug('Opening index.html...')
         self.driver.get(index_uri)
         svg = self.driver.find_element_by_tag_name('svg')
-        svg.screenshot(outfile)
+        svg.screenshot(outfile + '.png')
         self.logger.debug('Screenshot saved at {}'.format(outfile))

@@ -35,7 +35,7 @@ def build_parser():
         '-o',
         '--output',
         dest='output',
-        help='name of styled output file',
+        help='name of styled output file (no file extension)',
         type=str,
         required=True,
     )

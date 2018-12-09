@@ -106,7 +106,21 @@ class Drawer:
         generate_path = source_uri + 'generate.js'
 
         categories = self._read_categories()
-        if label in categories:
+        # Reverse quickdraw names
+        reverse_qd_names = {
+            "alarm_clock": "clock",
+            "diving_board": "board",
+            "cruise_ship": "ship",
+            "fire_hydrant": "hydrant",
+            "palm_tree": "tree",
+            "power_outlet": "outlet",
+            "the_mona_lisa": "painting",
+        }
+        try:
+            label_ = reverse_qd_names[label]
+        except KeyError:
+            label_ = label
+        if label_ in categories:
             with open(self.index_folder + outfile + '.html', 'w') as fp:
                 fp.write(
                     HTML_TEMPLATE.format(

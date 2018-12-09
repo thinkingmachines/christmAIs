@@ -117,8 +117,9 @@ paths should suffice, you only need to supply `--input`, `--style`, and
 `--output`.
 
 As an example, let's say I want to use the string `Thinking Machines` as our
-basis with the style of *Ang Kiukok* (`ang_kiukok.jpg`), then, my command will
-look like this:
+basis with the style of *Ang Kiukok's*
+[*Fishermen*](https://lifestyle.inquirer.net/263837/starting-bid-ang-kiukok-manansala-p12-million/)
+(`ang_kiukok.jpg`), then, my command will look like this:
 
 ```shell
 $ python -m christmais.tasks.christmais_time    \
@@ -130,3 +131,10 @@ $ python -m christmais.tasks.christmais_time    \
 This will then generate the output image in `./artifacts/`:
 
 ![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/tmds.png?token=AMWYs2dz3AMOGdS1ScaCGBWyvo-_VxRgks5cDdBvwA%3D%3D)
+
+## References
+
+- Pennington, Jeffrey, Richard Socher, and Christopher Manning. "Glove: Global vectors for word representation." Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP). 2014.
+- Ha, David, and Douglas Eck. "A neural representation of sketch drawings." arXiv preprint arXiv:1704.03477 (2017).
+- Gatys, Leon A., Alexander S. Ecker, and Matthias Bethge. "A neural algorithm of artistic style." arXiv preprint arXiv:1508.06576 (2015).
+- Magenta demonstration (`sketch-rnn.js`):https://github.com/hardmaru/magenta-demos/tree/master/sketch-rnn-js 

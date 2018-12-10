@@ -13,10 +13,10 @@ This work converts any input string into an abstract art by:
 
 This results to images that look like these:
 
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/book1.png?token=AMWYs2z_JoFRncHWEjer7NP_aUQ20G2pks5cDc8gwA%3D%3D)
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/book2.png?token=AMWYswJpjY4WYEoOeQxy84ziXDFj1ueaks5cDc9dwA%3D%3D)
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/sf1.png?token=AMWYsxAr2m8Nc7UiermGFKgd9Z6atjuLks5cDc9fwA%3D%3D)
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/truck1.png?token=AMWYs2dz3AMOGdS1ScaCGBWyvo-_VxRgks5cDdBvwA%3D%3D)
+![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/book1.png?token=AMWYs0kvUxilng9bnh7zBtURYqfdEz_Vks5cF1o7wA%3D%3D)
+![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/book2.png?token=AMWYszqRAnam0t9Ra9eWJui4jH7lB3ZVks5cF1p9wA%3D%3D)
+![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/sf1.png?token=AMWYs0_CfGJaVCn-vmFETfzRrsqMS-gkks5cF1qfwA%3D%3D)
+![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/truck1.png?token=AMWYsyFZDN1vcPmo_IMp8g5vAyL-B8xwks5cF1rIwA%3D%3D)
 
 ## Setup and Installation
 

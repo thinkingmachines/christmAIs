@@ -5,3 +5,4 @@
 from .drawer.drawer import Drawer
 
 __all__ = ['Drawer']
+__version__ = '2.2.0'

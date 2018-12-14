@@ -70,7 +70,11 @@ class Parser:
             try:
                 cat, scores = self._get_similar(query)
             except KeyError:
-                pass
+                # Handle edge-cases when there's no good word.
+                # Use `dog` as category, and set score to something
+                # small
+                cat = 'dog'
+                scores = np.random.uniform(0, 0.3)
             else:
                 cat_list.append(cat)
                 score_list.append(scores)

@@ -4,6 +4,10 @@ FROM python:3.6-stretch
 RUN apt-get update && \
     apt-get install -y build-essential libasound2-dev libjack-dev
 
+# Install chromedriver dependencies
+RUN apt-get update && \
+    apt-get install -y chromium
+
 # Set /usr/src/app as working dir
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app

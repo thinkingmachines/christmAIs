@@ -67,7 +67,7 @@ if [[ $(which apt-get) ]]; then
     echo "sudo privileges required"
     echo "============================================"
     echo ""
-    sudo apt-get install build-essential libasound2-dev libjack-dev
+    sudo apt-get install build-essential libasound2-dev libjack-dev python3-dev
 fi
 pip install --pre python-rtmidi
 

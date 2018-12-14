@@ -50,8 +50,7 @@ workspace. To run the script, execute the following command:
 
 ```shell
 source venv/bin/activate  # Highly recommended
-curl https://storage.googleapis.com/tm-christmais/install-christmais.sh > install-christmais.sh
-bash install-christmais.sh
+./install-christmais.sh
 ```
 
 This will first install `magenta` and its dependencies, download file
@@ -103,7 +102,7 @@ We have provided a script, `christmais_time.py` to easily generate your stylized
 In order to use it, simply run the following command:
 
 ```shell
-python -m christmais.tasks.christmais_time   \
+python -m christmais.tasks.christmais_time     \
     --input=<Input string to draw from>        \
     --style=<Path to style image>              \
     --output=<Unique name of output file>      \
@@ -122,9 +121,9 @@ basis with the style of *Ang Kiukok's*
 (`ang_kiukok.jpg`), then, my command will look like this:
 
 ```shell
-python -m christmais.tasks.christmais_time    \
-    --input="Thinking Machines"                 \
-    --style=./path/to/ang_kiukok.png            \
+python -m christmais.tasks.christmais_time \
+    --input="Thinking Machines"            \
+    --style=./path/to/ang_kiukok.png       \
     --output=tmds-output
 ```
 

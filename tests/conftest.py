@@ -7,6 +7,7 @@ import tensorflow as tf
 
 # Import from package
 from christmais.parser import Parser
+from christmais.drawer import Drawer
 from christmais.styler import Styler
 
 
@@ -23,6 +24,13 @@ def local(request):
 def parser():
     """Create a pre-made parser"""
     return Parser()
+
+
+@pytest.fixture
+def drawer():
+    """Create a pre-made drawer"""
+    webdriver = glob.glob('./**/test-chromedriver', recursive=True)
+    return Drawer(webdriver[0])
 
 
 @pytest.fixture

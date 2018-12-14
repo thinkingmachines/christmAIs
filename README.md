@@ -38,9 +38,9 @@ For local development, it is **recommended to setup a virtual environment**. To
 do that, simply run the following commands:
 
 ```shell
-$ git clone git@github.com:thinkingmachines/christmAIs.git
-$ cd christmAIs
-$ make venv
+git clone git@github.com:thinkingmachines/christmAIs.git
+cd christmAIs
+make venv
 ```
 
 ### Automated Install
@@ -49,14 +49,14 @@ We created an automated install script to perform a one-click setup in your
 workspace. To run the script, execute the following command:
 
 ```shell
-$ curl https://storage.googleapis.com/tm-christmais/install-christmais.sh > install-christmais.sh
-$ bash install-christmais.sh
+source venv/bin/activate  # Highly recommended
+curl https://storage.googleapis.com/tm-christmais/install-christmais.sh > install-christmais.sh
+bash install-christmais.sh
 ```
 
-It is recommended to perform these steps inside a virtual environment. It will
-first install `magenta` and its dependencies, download file dependencies
-(`categories.txt`, `model.ckpt`, and `chromedriver`), then clone and install
-this package.
+This will first install `magenta` and its dependencies, download file
+dependencies (`categories.txt`, `model.ckpt`, and `chromedriver`), then clone
+and install this package.
 
 ### Manual Install
 
@@ -71,12 +71,12 @@ only supported in Linux and Mac OS. To install magenta, you can perform the
 or do the following steps:
 
 ```shell
-# Install OS dependencies 
-$ apt-get update && \
-  apt-get install -y build-essential libasound2-dev libjack-dev
+# Install OS dependencies
+apt-get update && \
+apt-get install -y build-essential libasound2-dev libjack-dev
 
 # Install magenta
-$ venv/bin/pip install magenta
+venv/bin/pip install magenta
 
 ```
 
@@ -87,7 +87,7 @@ that you have create a virtual environment via `make venv`, we recommend that
 you simply run the following command:
 
 ```shell
-$ make build # or `make dev`
+make build # or `make dev`
 ```
 
 This will also download (via `wget`) the following files:
@@ -103,13 +103,13 @@ We have provided a script, `christmais_time.py` to easily generate your stylized
 In order to use it, simply run the following command:
 
 ```shell
-$ python -m christmais.tasks.christmais_time   \
+python -m christmais.tasks.christmais_time   \
     --input=<Input string to draw from>        \
     --style=<Path to style image>              \
     --output=<Unique name of output file>      \
     --model-path=<Path to model.ckpt>          \
     --categories-path=<Path to categories.txt> \
-    --webdriver-path=<Path to webdriver> 
+    --webdriver-path=<Path to webdriver>
 ```
 
 If you followed the setup instructions above, then the default values for the
@@ -122,10 +122,10 @@ basis with the style of *Ang Kiukok's*
 (`ang_kiukok.jpg`), then, my command will look like this:
 
 ```shell
-$ python -m christmais.tasks.christmais_time    \
+python -m christmais.tasks.christmais_time    \
     --input="Thinking Machines"                 \
     --style=./path/to/ang_kiukok.png            \
-    --output=tmds-output                         
+    --output=tmds-output
 ```
 
 This will then generate the output image in `./artifacts/`:
@@ -137,4 +137,4 @@ This will then generate the output image in `./artifacts/`:
 - Pennington, Jeffrey, Richard Socher, and Christopher Manning. "Glove: Global vectors for word representation." Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP). 2014.
 - Ha, David, and Douglas Eck. "A neural representation of sketch drawings." arXiv preprint arXiv:1704.03477 (2017).
 - Gatys, Leon A., Alexander S. Ecker, and Matthias Bethge. "A neural algorithm of artistic style." arXiv preprint arXiv:1508.06576 (2015).
-- Magenta demonstration (`sketch-rnn.js`):https://github.com/hardmaru/magenta-demos/tree/master/sketch-rnn-js 
+- Magenta demonstration (`sketch-rnn.js`):https://github.com/hardmaru/magenta-demos/tree/master/sketch-rnn-js

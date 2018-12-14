@@ -75,9 +75,9 @@ class Parser:
                 # small
                 cat = 'dog'
                 scores = np.random.uniform(0, 0.3)
-            else:
-                cat_list.append(cat)
-                score_list.append(scores)
+            # Append anyway
+            cat_list.append(cat)
+            score_list.append(scores)
         sim_label = cat_list[np.argmax(score_list)]
         sim_score = np.max(score_list)
         return self._get_actual_label(sim_label), sim_score

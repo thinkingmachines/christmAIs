@@ -1,10 +1,10 @@
-#!bin/bash
+#!/bin/bash
 #
 # Automated set-up script for christmAIs for any workspace
 #
 # Usage
 # -----
-# To use this script, simply run `bash install-christmais.sh`
+# To use this script, simply run `./install-christmais.sh`
 #
 
 # Exit on error
@@ -85,8 +85,7 @@ echo "=============================="
 echo "cloning christmAIs repository"
 echo "=============================="
 echo ""
-git clone git@github.com:thinkingmachines/christmAIs.git
-cd christmAIs
+
 python setup.py install
 
 echo ""

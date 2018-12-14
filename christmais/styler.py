@@ -84,6 +84,11 @@ class Styler:
         """
         content_img_list = glob.glob('./**/{}'.format(content_path), recursive=True)
         style_img_list = glob.glob('./**/{}'.format(style_path), recursive=True)
+        if len(style_img_list) == 0 or len(content_img_list) == 0:
+            msg = 'Content or style path not found! Make sure it\'s in repo root!'
+            self.logger.error(msg)
+            raise ValueError(msg)
+
         if len(style_img_list) > max_styles:
             self.logger.warn(
                 'Image list is greater than max_styles_to_evaluate'

@@ -48,6 +48,8 @@ class Drawer:
         self.logger.debug('Creating chromedriver...')
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
         self.driver = webdriver.Chrome(webdriver_path, chrome_options=options)
         self.index_folder = './generated_html/'
         self.png_folder = './generated_png/'

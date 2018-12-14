@@ -84,3 +84,5 @@ chromedriver
 output
 *.tar.gz
 *.zip
+
+styles

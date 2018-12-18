@@ -2,7 +2,6 @@
 
 """Text-to-abstract art generation for the holidays!"""
 
-from .drawer.drawer import Drawer
-
-__all__ = ['Drawer']
+__author__ = 'Thinking Machines Data Science'
+__email__ = 'hello@thinkingmachin.es'
 __version__ = '2.2.0'

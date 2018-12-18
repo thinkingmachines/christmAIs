@@ -14,10 +14,10 @@ This work converts any input string into an abstract art by:
 
 This results to images that look like these:
 
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/book1.png?token=AMWYs0kvUxilng9bnh7zBtURYqfdEz_Vks5cF1o7wA%3D%3D)
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/book2.png?token=AMWYszqRAnam0t9Ra9eWJui4jH7lB3ZVks5cF1p9wA%3D%3D)
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/sf1.png?token=AMWYs0_CfGJaVCn-vmFETfzRrsqMS-gkks5cF1qfwA%3D%3D)
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/truck1.png?token=AMWYsyFZDN1vcPmo_IMp8g5vAyL-B8xwks5cF1rIwA%3D%3D)
+![alt text](https://storage.googleapis.com/tm-christmais/assets/book1.png)
+![alt text](https://storage.googleapis.com/tm-christmais/assets/book2.png)
+![alt text](https://storage.googleapis.com/tm-christmais/assets/sf1.png)
+![alt text](https://storage.googleapis.com/tm-christmais/assets/truck1.png)
 
 ## Setup and Installation
 
@@ -130,7 +130,7 @@ python -m christmais.tasks.christmais_time \
 
 This will then generate the output image in `./artifacts/`:
 
-![alt text](https://raw.githubusercontent.com/thinkingmachines/christmAIs/master/assets/tmds.png?token=AMWYszrMQu4tWjV810d4Wu4a1Oe9_3Mpks5cFfEtwA%3D%3D)
+![alt text](https://storage.googleapis.com/tm-christmais/assets/tmds.png)
 
 ## References
 

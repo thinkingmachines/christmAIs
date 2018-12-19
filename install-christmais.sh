@@ -71,6 +71,16 @@ if [[ $(which apt-get) ]]; then
 fi
 pip install --pre python-rtmidi
 
+if [[ $(which apt-get) ]]; then
+    echo ""
+    echo "============================================"
+    echo "installing chromium for the webdriver       "
+    echo "sudo privileges required"
+    echo "============================================"
+    echo ""
+    sudo apt-get install chromium
+fi
+
 # Set up the magenta dependency
 echo ""
 echo "=============================="

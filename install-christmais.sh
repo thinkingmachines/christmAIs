@@ -37,17 +37,32 @@ echo "webdriver (chromedriver)                    "
 echo "============================================"
 echo ""
 
-wget https://storage.googleapis.com/tm-christmais/categories.txt && \
-    mkdir categories && \
-    mv categories.txt categories/
+# Get categories.txt
+if [ -f categories/categories.txt ]; then
+    echo "categories.txt exists! Skipping download..."
+else
+    wget https://storage.googleapis.com/tm-christmais/categories.txt && \
+        mkdir categories && \
+        mv categories.txt categories/
+fi
 
-wget https://storage.googleapis.com/download.magenta.tensorflow.org/models/arbitrary_style_transfer.tar.gz && \
-    mkdir ckpt && \
-    tar --strip-components 1 -xvzf arbitrary_style_transfer.tar.gz -C ckpt/
+# Get model checkpoint
+if [ -f ckpt/model.ckpt.index ]; then
+    echo "model checkpoint exists! Skipping download..."
+else
+    wget https://storage.googleapis.com/download.magenta.tensorflow.org/models/arbitrary_style_transfer.tar.gz && \
+        mkdir ckpt && \
+        tar --strip-components 1 -xvzf arbitrary_style_transfer.tar.gz -C ckpt/
+fi
 
-wget https://chromedriver.storage.googleapis.com/2.44/chromedriver_linux64.zip && \
-    mkdir webdriver && \
-    unzip chromedriver_*.zip -d webdriver
+# Get chromedriver
+if [ -f webdriver/chromedriver ]; then
+    echo "chromedriver exists! Skipping download..."
+else
+    wget https://chromedriver.storage.googleapis.com/2.44/chromedriver_linux64.zip && \
+        mkdir webdriver && \
+        unzip chromedriver_*.zip -d webdriver
+fi
 
 echo ""
 echo "============================================"

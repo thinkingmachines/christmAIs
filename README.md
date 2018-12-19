@@ -97,6 +97,25 @@ This will also download (via `wget`) the following files:
 - **chromedriver** (5.09 MB): contains the web driver for accessing the HTML output for
     Sketch-RNN (will be saved at `./webdriver/chromedriver`).
 
+#### Generating the documentation
+
+Ensure that you have all dev dependencies installed:
+
+```shell
+git clone git@github.com:thinkingmachines/christmAIs.git
+make venv
+make dev
+```
+
+Then to build the actual docs
+
+```shell
+cd christmAIs/docs/
+make html
+```
+
+This will generate an `index.html` file that you can view in your browser.
+
 ## Usage
 
 We have provided a script, `christmais_time.py` to easily generate your stylized Quick, Draw! images.
@@ -131,6 +150,7 @@ python -m christmais.tasks.christmais_time \
 This will then generate the output image in `./artifacts/`:
 
 ![alt text](https://storage.googleapis.com/tm-christmais/assets/tmds.png)
+
 
 ## References
 

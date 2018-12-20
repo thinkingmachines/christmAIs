@@ -74,6 +74,53 @@ echo "- chromedriver: ./webdriver/chromedriver    "
 echo "============================================"
 echo ""
 
+# Download style images
+echo ""
+echo "============================================"
+echo "Downloading style images from               "
+echo "Google Cloud Storage                        "
+echo "============================================"
+echo ""
+
+# Sample style images
+declare -a stylenames=(
+    "ang_kiukok.jpg"
+    "cassis.jpg"
+    "composition.jpg"
+    "dancer_flowers.jpg"
+    "impression_sunrise.jpg"
+    "la_grande_jatte.jpg"
+    "la_muse.jpg"
+    "marilyn_monroe.jpg"
+    "pila_sa_bigas.jpg"
+    "rain_princess.jpg"
+    "seated_nude.jpg"
+    "starry_night.jpg"
+    "the_scream.jpg"
+    "the_wave.jpg"
+    "tres_marias.jpg"
+    )
+
+if ls styles/*.jpg 1> /dev/null 2>&1; then
+    echo "Style files exists!"
+else
+    echo "Creating styles/ directory..."
+    mkdir styles;
+    for i in "${stylenames[@]}"
+        do
+            echo "Downloading $i into styles/..."
+            wget -P styles/ https://storage.googleapis.com/tm-christmais/styles/$i
+        done
+fi
+
+echo ""
+echo "============================================"
+echo "Download success! The following files are   "
+echo "now stored in filesystem:                   "
+echo "- style images: ./styles/*.jpg              "
+echo "============================================"
+echo ""
+
 # Install rtmidi for realtime midi IO
 if [[ $(which apt-get) ]]; then
     echo ""

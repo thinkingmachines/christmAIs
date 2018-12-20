@@ -4,9 +4,15 @@ christmAIs
 
 .. image:: https://storage.googleapis.com/tm-github-builds/build/christmAIs-master.svg
    :target: https://console.cloud.google.com/cloud-build/builds?authuser=2&organizationId=301224238109&projec|t=tm-github-builds
+   :alt: Build Status
+.. image:: https://readthedocs.org/projects/christmais-2018/badge/?version=latest
+   :target: https://christmais-2018.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 .. image:: https://img.shields.io/badge/License-GPL%20v2-blue.svg
    :target: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+   :alt: License
 .. image:: https://img.shields.io/badge/python-3.6+-blue.svg
+   :alt: Python version
 
 **christmAIs** ("krees-ma-ees") is text-to-abstract art generation for the
 holidays!

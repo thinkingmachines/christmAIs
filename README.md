@@ -107,6 +107,8 @@ make venv
 make dev
 ```
 
+Hello there general kenobi
+
 Then to build the actual docs
 
 ```shell

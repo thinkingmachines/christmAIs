@@ -9,9 +9,9 @@ backcall==0.1.0
 backports.tempfile==1.0
 backports.weakref==1.0.post1
 bokeh==1.0.2
-boto3==1.9.69
+boto3==1.9.70
 boto==2.49.0
-botocore==1.12.69
+botocore==1.12.70
 bz2file==0.98
 cachetools==3.0.0
 certifi==2018.11.29
@@ -39,7 +39,7 @@ gym==0.10.9
 h5py==2.9.0
 httplib2==0.12.0
 humanfriendly==4.17
-idna==2.6
+idna==2.7
 imagesize==1.1.0
 intervaltree==3.0.2
 ipython-genutils==0.2.0
@@ -93,7 +93,7 @@ python-dateutil==2.7.5
 python-rtmidi==1.1.2
 pytz==2018.7
 pyyaml==3.13
-requests==2.18.4
+requests==2.20.0
 resampy==0.2.1
 rsa==4.0
 s3transfer==0.1.13
@@ -117,14 +117,14 @@ tensorflow-metadata==0.9.0
 tensorflow-probability==0.5.0
 tensorflow==1.12.0
 termcolor==1.1.0
-tfds-nightly==0.0.2.dev201812200014
+tfds-nightly==0.0.2.dev201812201756
 toml==0.10.0
 tornado==5.1.1
 tox==3.6.0
 tqdm==4.28.1
 traitlets==4.3.2
 uritemplate==3.0.0
-urllib3==1.22
+urllib3==1.24.1
 virtualenv==16.1.0
 wcwidth==0.1.7
 werkzeug==0.14.1

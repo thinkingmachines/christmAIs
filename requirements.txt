@@ -57,7 +57,7 @@ python-dateutil==2.7.5
 python-rtmidi==1.1.2
 pytz==2018.7
 pyyaml==3.13
-requests==2.18.4
+requests==2.20.0
 resampy==0.2.1
 s3transfer==0.1.13
 scikit-learn==0.20.0
@@ -72,7 +72,7 @@ tensorflow==1.12.0
 termcolor==1.1.0
 tornado==5.1.1
 traitlets==4.3.2
-urllib3==1.22
+urllib3==1.24.1
 wcwidth==0.1.7
 werkzeug==0.14.1
 wheel==0.32.3

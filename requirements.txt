@@ -56,7 +56,7 @@ pyparsing==2.3.0
 python-dateutil==2.7.5
 python-rtmidi==1.1.2
 pytz==2018.7
-pyyaml==3.13
+pyyaml==4.2b1
 requests==2.20.0
 resampy==0.2.1
 s3transfer==0.1.13
